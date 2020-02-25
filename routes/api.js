@@ -1,10 +1,12 @@
 const express = require('express');
-const router = express.Router();
+const passport = require('passport');
 const  UniversityController   = require('../controllers/UniversityController');
 const SchoolController = require('../controllers/SchoolController');
 const LaboratoryController = require('../controllers/LaboratoryController');
 
 
+
+const router = express.Router();
 router.get('/', (req, res)=>{
     res.send("Research app REST API working  !");
 })
