@@ -3,6 +3,7 @@ const localStrategy = require('passport-local').Strategy;
 const UserModel = require('../models/user');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
+const config = require('../config');
 
 
 passport.use('signup', new localStrategy({
@@ -45,7 +46,7 @@ passport.use('login', new localStrategy({
 
 passport.use(new JWTstrategy({
  
-  secretOrKey : 'top_secret',
+  secretOrKey : config.JWT_SECRET,
   jwtFromRequest : ExtractJWT.fromAuthHeaderWithScheme('jwt')
 }, async (token, done) => {
   try {

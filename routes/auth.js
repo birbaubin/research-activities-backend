@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const config = require('../config');
 
 
 const router = express.Router();
@@ -20,16 +21,14 @@ router.post('/signup', passport.authenticate('signup', { session : false }) , as
     passport.authenticate('login', async (err, user, info) => {     
         try {
         if(err || !user){
-          const error = new Error('An Error occurred')
-          return next(error);
+          return next(info);
 
-          console.log(err);
         }
         req.login(user, { session : false }, async (error) => {
           if( error ) 
             return next(error)
           const body = { _id : user._id, email : user.email };
-          const token = jwt.sign({ user : body },'top_secret'); 
+          const token = jwt.sign({ user : body },config.JWT_SECRET); 
           return res.json({ token });
         });     
     } catch (error) {
@@ -38,4 +37,6 @@ router.post('/signup', passport.authenticate('signup', { session : false }) , as
     })(req, res, next);
   });
 
+
+  
   module.exports = router;
