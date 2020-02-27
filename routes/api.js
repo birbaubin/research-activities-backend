@@ -93,4 +93,26 @@ router.delete('/laboratory/:_id', (req, resp)=>{
 })
 
 
+/*************users endpoints ***********/
+router.post('/user', (req, resp)=>{
+    UserController.createUser(req, resp);
+})
+
+router.put('/user', (req, resp)=>{
+    UserController.updateUser(req, resp);
+})
+
+router.get('/user/:_id', (req, resp)=>{
+   UserController.findUser(req, resp);
+})
+
+router.get('/user', (req, resp)=>{
+    UserController.findAllUsers(req, resp);
+})
+
+router.delete('/user/:_id', (req, resp)=>{
+   UserController.deleteUser(req, resp);
+})
+
+
 module.exports = router;
