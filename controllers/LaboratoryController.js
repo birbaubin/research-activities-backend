@@ -56,7 +56,7 @@ exports.findAllLaboratorys = function(req, resp){
 
 exports.deleteLaboratory = function(req, resp){
 
-    Laboratory.deleteOne({_id: req.body._id})
+    Laboratory.deleteOne({_id: req.params._id})
                 .then(result=>{
                     resp.send(result);
                 })
