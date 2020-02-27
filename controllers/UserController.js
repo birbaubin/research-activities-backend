@@ -1,12 +1,19 @@
-const Laboratory = require('../models/laboratory');
+const User = require('../models/user');
 
 
     
-exports.createLaboratory = function(req, resp){
+exports.createUser = function(req, resp){
 
-        Laboratory.create(req.body)
-        .then(laboratory =>{
-            resp.send(laboratory);
+        try {
+          const user = await UserModel.create({ email, password });
+          return done(null, user);
+        } catch (error) {
+          done(error);
+        }
+
+        User.create({email:"name",password:"pass"})
+        .then(user =>{
+            resp.send(user);
         })
         .catch(error=>{
             console.log(error);
@@ -15,9 +22,9 @@ exports.createLaboratory = function(req, resp){
     }
 
         
-exports.updateLaboratory = function(req, resp){
+exports.updateUser = function(req, resp){
 
-    Laboratory.updateOne({_id: req.body._id}, {$set: req.body})
+    User.updateOne({_id: req.body._id}, {$set: req.body})
             .then(result=>{
                 resp.send(result);
             })
@@ -28,9 +35,9 @@ exports.updateLaboratory = function(req, resp){
     
 }
 
-exports.findLaboratory = function(req, resp){
+exports.findUser = function(req, resp){
 
-    Laboratory.findById(req.params._id)
+    User.findById(req.params._id)
                 .then(school=>{
                     resp.send(school);
                 })
@@ -40,11 +47,11 @@ exports.findLaboratory = function(req, resp){
     
 }
 
-exports.findAllLaboratorys = function(req, resp){
+exports.findAllUsers = function(req, resp){
 
-   Laboratory.find()
-            .then(laboratories=>{
-                resp.send(laboratories);
+   User.find()
+            .then(users=>{
+                resp.send(users);
                 })
             .catch(error=>{
                 console.log(error);
@@ -54,9 +61,9 @@ exports.findAllLaboratorys = function(req, resp){
     
 }
 
-exports.deleteLaboratory = function(req, resp){
+exports.deleteUser = function(req, resp){
 
-    Laboratory.deleteOne({_id: req.params._id})
+    User.deleteOne({_id: req.params._id})
                 .then(result=>{
                     resp.send(result);
                 })

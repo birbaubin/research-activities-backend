@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const api = require('./routes/api');
 const mongoose = require('mongoose');
 const config = require('./config');
@@ -7,6 +8,7 @@ const passport = require('passport');
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 mongoose.connect('mongodb://localhost/research-activities');
 mongoose.Promise = global.Promise;
 require('./auth/auth');

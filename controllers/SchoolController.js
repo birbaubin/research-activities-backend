@@ -56,7 +56,7 @@ exports.findAllSchools = function(req, resp){
 
 exports.deleteSchool = function(req, resp){
 
-    School.deleteOne({_id: req.body._id})
+    School.deleteOne({_id: req.params._id})
                 .then(result=>{
                     resp.send(result);
                 })
