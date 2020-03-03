@@ -9,7 +9,7 @@ const passport = require('passport');
 const app = express();
 app.use(express.json());
 app.use(cors())
-mongoose.connect('mongodb://heroku_1b8nz662:hpueci1942ulml4c9h1runn5qk@ds113826.mlab.com:13826/heroku_1b8nz662');
+mongoose.connect(config.MONGODB_URI);
 mongoose.Promise = global.Promise;
 require('./auth/auth');
 
