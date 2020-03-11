@@ -3,7 +3,8 @@ const passport = require('passport');
 const  UniversityController   = require('../controllers/UniversityController');
 const SchoolController = require('../controllers/SchoolController');
 const LaboratoryController = require('../controllers/LaboratoryController');
-
+const authorise = require('../helpers/authorize')
+const role = require('../helpers/role')
 
 
 const router = express.Router();
@@ -16,7 +17,7 @@ router.get('/', (req, res)=>{
 //TODO: change naming convention
 
 /*************Universities endpoints ***********/
-router.post('/university', (req, resp)=>{
+router.post('/university', authorise([role.CED_HEAD]), (req, resp)=>{
     UniversityController.createUniversity(req, resp);
 })
 

@@ -1,0 +1,5 @@
+module.exports = {
+    CED_HEAD: 'CED_HEAD',
+    LABORATORY_HEAD: 'LABORATORY_HEAD',
+    SEARCHER: 'LABORATORY_HEAD'
+}

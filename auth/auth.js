@@ -4,14 +4,23 @@ const UserModel = require('../models/user');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 const config = require('../config');
+const roles = require('../helpers/role')
 
 
 passport.use('signup', new localStrategy({
   usernameField : 'email',
-  passwordField : 'password'
-}, async (email, password, done) => {
+  passwordField : 'password',
+  passReqToCallback: true
+}, async (req, email, password, done) => {
     try {
-      const user = await UserModel.create({ email, password });
+      const rolesArray  = [roles.CED_HEAD, roles.LABORATORY_HEAD, roles.SEARCHER]
+      if(!rolesArray.includes(req.body.role)){
+        console.log("error occured")
+        
+      }
+        
+      const role = req.body.role
+      const user = await UserModel.create({ email, password, role });
       return done(null, user);
     } catch (error) {
       done(error);
@@ -47,7 +56,7 @@ passport.use('login', new localStrategy({
 passport.use(new JWTstrategy({
  
   secretOrKey : config.JWT_SECRET,
-  jwtFromRequest : ExtractJWT.fromAuthHeaderWithScheme('jwt')
+  jwtFromRequest : ExtractJWT.fromAuthHeaderWithScheme('Bearer')
 }, async (token, done) => {
   try {
     return done(null, token.user);
