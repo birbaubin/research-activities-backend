@@ -21,7 +21,7 @@ router.post('/signup', passport.authenticate('signup', { session : false }) , as
     passport.authenticate('login', async (err, user, info) => {     
         try {
         if(err || !user){
-          console.log(user)
+          console.log(JSON.stringify(user))
           return next(info);
 
 
