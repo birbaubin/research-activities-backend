@@ -36,7 +36,7 @@ exports.findLaboratory = function(req, resp){
                     School.findById(laboratory.school_id)
                     .then(school=>{
 
-                        let laboratoryObject = new Object();
+                        let laboratoryObject = {};
                         Object.assign(laboratoryObject, laboratory._doc);
                         laboratoryObject.school = {
                             name: school.name

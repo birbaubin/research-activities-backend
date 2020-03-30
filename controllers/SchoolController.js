@@ -37,7 +37,7 @@ exports.findSchool = function(req, resp){
                 University.findById(school.university_id)
                             .then(university=>{
 
-                                let schoolObject = new Object();
+                                let schoolObject = {};
                                 Object.assign(schoolObject, school._doc);
                                 schoolObject.univertity = {
                                     name: university.name

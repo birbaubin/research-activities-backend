@@ -19,8 +19,10 @@ passport.use('signup', new localStrategy({
         
       }
         
-      const role = req.body.role
-      const user = await UserModel.create({ email, password, role });
+      const { firstName, lastName, role} = req.body;
+
+      console.log(firstName, lastName, role);
+      const user = await UserModel.create({ firstName, lastName, email, password, role});
       return done(null, user);
     } catch (error) {
       done(error);
@@ -35,7 +37,7 @@ passport.use('login', new localStrategy({
   passwordField : 'password'
 }, async (email, password, done) => {
   try {
-    const user = await UserModel.findOne({ email });
+    let user = await UserModel.findOne({ email });
     if( !user ){
      
       return done(null, false, { message : 'User not found'});
