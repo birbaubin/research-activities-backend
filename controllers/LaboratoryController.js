@@ -1,5 +1,5 @@
 const Laboratory = require('../models/laboratory');
-
+const School = require('../models/school');
 
     
 exports.createLaboratory = function(req, resp){
@@ -31,8 +31,23 @@ exports.updateLaboratory = function(req, resp){
 exports.findLaboratory = function(req, resp){
 
     Laboratory.findById(req.params._id)
-                .then(school=>{
-                    resp.send(school);
+                .then(laboratory=>{
+                    
+                    School.findById(laboratory.school_id)
+                    .then(school=>{
+
+                        let laboratoryObject = new Object();
+                        Object.assign(laboratoryObject, laboratory._doc);
+                        laboratoryObject.school = {
+                            name: school.name
+                        }
+                        //console.log(schoolObject);
+                        
+
+                        //console.log(university);
+                        resp.send(laboratoryObject);
+                        
+                    })
                 })
                 .catch(error=>{
                     console.log(error);

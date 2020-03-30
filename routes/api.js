@@ -46,6 +46,8 @@ router.get('/university/:_id/schools', (req, resp)=>{
 
 /*************Schools endpoints ***********/
 router.post('/school', (req, resp)=>{
+
+    console.log(req.body);
     SchoolController.createSchool(req, resp);
 })
 

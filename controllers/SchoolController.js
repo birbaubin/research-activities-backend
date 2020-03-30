@@ -1,5 +1,6 @@
 const School = require('../models/school');
 const Laboratory = require('../models/laboratory');
+const University = require('../models/university');
 
     
 exports.createSchool = function(req, resp){
@@ -32,7 +33,23 @@ exports.findSchool = function(req, resp){
 
     School.findById(req.params._id)
             .then(school=>{
-                resp.send(school);
+
+                University.findById(school.university_id)
+                            .then(university=>{
+
+                                let schoolObject = new Object();
+                                Object.assign(schoolObject, school._doc);
+                                schoolObject.univertity = {
+                                    name: university.name
+                                }
+                                //console.log(schoolObject);
+                                
+
+                                //console.log(university);
+                                resp.send(schoolObject);
+                                
+                            })
+                
             })
             .catch(error=>{
                 console.log(error);
