@@ -59,7 +59,24 @@ exports.findAllLaboratorys = function(req, resp){
 
    Laboratory.find()
             .then(laboratories=>{
-                resp.send(laboratories);
+
+                 laboratories.forEach(laboratory => {
+                    
+                        School.findById(laboratory.school_id)
+                            .then(school=>{
+
+                                laboratory._doc.school = {
+                                    name: school.name
+                                }
+                                //console.log(schools);  
+                            })
+                });
+                
+
+                   setTimeout(() => {
+                        resp.send(laboratories);
+                   }, 200); 
+               
                 })
             .catch(error=>{
                 console.log(error);

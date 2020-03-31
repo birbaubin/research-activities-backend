@@ -5,6 +5,7 @@ const University = require('../models/university');
     
 exports.createSchool = function(req, resp){
 
+        if(req.body)
         School.create(req.body)
         .then(school =>{
             resp.send(school);
@@ -61,12 +62,31 @@ exports.findSchool = function(req, resp){
 exports.findAllSchools = function(req, resp){
 
    School.find()
-            .then(universities=>{
-                resp.send(universities);
+            .then(schools=>{
+                //console.log(schools);
+
+                schools.forEach(school => {
+                    
+                        University.findById(school.university_id)
+                            .then(university=>{
+
+                                school._doc.university = {
+                                    name: university.name
+                                }
+                                //console.log(schools);  
+                            })
+                });
+                
+
+                   setTimeout(() => {
+                        resp.send(schools);
+                   }, 200); 
+               
+                
             })
             .catch(error=>{
                 console.log(error);
-                resp.send("error");
+                resp.send(error);
             })
     
 }
