@@ -85,16 +85,16 @@ exports.deleteUser = function(req, resp){
 
  exports.followUser = function(req, resp){
 
-    FollowedUser.create({name: req.body.data.name, otherProperties: JSON.stringify(req.body.data)})
+    FollowedUser.create({name: req.body.name, otherProperties: JSON.stringify(req.body)})
     resp.send({status: "User followed"});
  }
 
  exports.isFollowing = function(req, resp){
 
 
-    FollowedUser.findOne({name: req.params.name}).then(user=>{
-        console.log(user);
-        resp.send({following: true});
+    FollowedUser.findOne({name: req.params.name}).then(foundUser=>{
+        console.log(foundUser._doc);
+        resp.send({following: true, user: JSON.parse(foundUser._doc.otherProperties) });
     })
     .catch(error=>{
         resp.send(error);
