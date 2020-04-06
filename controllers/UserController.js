@@ -1,11 +1,12 @@
 const User = require('../models/user');
+const FollowedUser = require('../models/followed-user');
 
 
     
 exports.createUser = function(req, resp){
 
         try {
-          const user = await UserModel.create({ email, password });
+          const user =  UserModel.create({ email, password });
           return done(null, user);
         } catch (error) {
           done(error);
@@ -71,6 +72,33 @@ exports.deleteUser = function(req, resp){
                     console.log(error);
                     resp.send(error);
                 })
+ }
+
+ exports.isFollowing = function(req, resp){
+
+    FollowedUser.findOne({name: req.body.name})
+                .then(result=>{
+                    console.log(result);
+                })
+
+ }
+
+ exports.followUser = function(req, resp){
+
+    FollowedUser.create({name: req.body.data.name, otherProperties: JSON.stringify(req.body.data)})
+    resp.send({status: "User followed"});
+ }
+
+ exports.isFollowing = function(req, resp){
+
+
+    FollowedUser.findOne({name: req.params.name}).then(user=>{
+        console.log(user);
+        resp.send({following: true});
+    })
+    .catch(error=>{
+        resp.send(error);
+    })
  }
 
  

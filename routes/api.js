@@ -3,6 +3,7 @@ const passport = require('passport');
 const  UniversityController   = require('../controllers/UniversityController');
 const SchoolController = require('../controllers/SchoolController');
 const LaboratoryController = require('../controllers/LaboratoryController');
+const UserController = require('../controllers/UserController');
 const authorise = require('../helpers/authorize')
 const role = require('../helpers/role')
 
@@ -117,4 +118,13 @@ router.delete('/user/:_id', (req, resp)=>{
 })
 
 
+/****************Followed users endpoints  ********/
+
+router.post('/follow', (req, resp)=>{
+    UserController.followUser(req, resp);
+})
+
+router.get('/is-following/:name', (req, resp)=>{
+    UserController.isFollowing(req, resp);
+})
 module.exports = router;
