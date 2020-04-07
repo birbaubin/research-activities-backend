@@ -98,10 +98,10 @@ exports.deleteUser = function(req, resp){
 
     FollowedUser.findOne({name: req.params.name}).then(foundUser=>{
         console.log(foundUser._doc);
-        resp.send({following: true, user: JSON.parse(foundUser._doc.otherProperties) });
+        resp.send({isFollowing: true, user: JSON.parse(foundUser._doc.otherProperties) });
     })
     .catch(error=>{
-        resp.send(error);
+        resp.send({isFollowing: false});
     })
  }
 
