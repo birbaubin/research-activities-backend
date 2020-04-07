@@ -19,17 +19,15 @@ passport.use('signup', new localStrategy({
         
       }
         
-      const { firstName, lastName, role} = req.body;
+      const { email, password, role} = req.body;
 
-      console.log(firstName, lastName, role);
-      const user = await UserModel.create({ firstName, lastName, email, password, role});
+      console.log(email, password, role);
+      const user = await UserModel.create({ email, password, role, has_confirmed: false});
       return done(null, user);
     } catch (error) {
       done(error);
     }
 }));
-
-
 
 
 passport.use('login', new localStrategy({

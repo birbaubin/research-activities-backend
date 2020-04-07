@@ -1,31 +1,35 @@
 const User = require('../models/user');
 const FollowedUser = require('../models/followed-user');
+const roles = require('../helpers/role')
 
 
     
 exports.createUser = function(req, resp){
 
-        try {
-          const user =  UserModel.create({ email, password });
-          return done(null, user);
-        } catch (error) {
-          done(error);
+        const { email, password, role} = req.body;
+        const rolesArray  = [roles.CED_HEAD, roles.LABORATORY_HEAD, roles.SEARCHER]
+        console.log(req.body.role)
+        if(!rolesArray.includes(req.body.role)){
+            console.log("error occured")
+            resp.status(400).send({error: "Incorrect role value"})
         }
-
-        User.create({email:"name",password:"pass"})
-        .then(user =>{
-            resp.send(user);
-        })
-        .catch(error=>{
-            console.log(error);
-            resp.send("error");
-        });
+        else{
+            User.create({email, password, role, has_confirmed: false})
+            .then(user =>{
+                resp.send(user);
+            })
+            .catch(error=>{
+                console.log(error);
+                resp.send("error");
+            });
+        }
+         
     }
 
         
 exports.updateUser = function(req, resp){
 
-    User.updateOne({_id: req.body._id}, {$set: req.body})
+    User.updateOne({_id: req.body._id}, {$set: req.body, has_confirmed: true})
             .then(result=>{
                 resp.send(result);
             })

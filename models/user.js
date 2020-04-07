@@ -8,11 +8,11 @@ const UserSchema = new Schema({
   
   firstName : {
     type : String,
-    required : true
+    required : false
   },
   lastName : {
     type : String,
-    required : true
+    required : false
   },
   email : {
     type : String,
@@ -26,6 +26,10 @@ const UserSchema = new Schema({
   role: {
     type: String,
     required: true
+  },
+  has_confirmed: {
+    type: Boolean,
+    required: true
   }
 });
 
@@ -33,6 +37,7 @@ const UserSchema = new Schema({
 UserSchema.pre('save', async function(next){
   const hash = await bcrypt.hash(this.password, 10);
   this.password = hash;
+  this.has_confirmed = false;
   next();
 });
 
