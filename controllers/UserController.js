@@ -13,13 +13,7 @@ exports.createUser = function(req, resp){
             resp.status(400).send({error: "Incorrect role value"})
         }
         else{
-            const token = userHelper.requesterUser(req).role;
         
-           if(req.body.role==roles.SEARCHER && role==roles.SEARCHER)
-           {
-               resp.status(401).send({message: "You are not authorized to make this action"});
-           }
-           else{
             User.create({email, password, role, has_confirmed: false})
             .then(user =>{
                 resp.send(user);
@@ -29,7 +23,7 @@ exports.createUser = function(req, resp){
                 resp.send("error");
             });
            }
-        }  
+        
     }
 
         

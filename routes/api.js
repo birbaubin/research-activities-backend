@@ -4,9 +4,9 @@ const  UniversityController   = require('../controllers/UniversityController');
 const SchoolController = require('../controllers/SchoolController');
 const LaboratoryController = require('../controllers/LaboratoryController');
 const UserController = require('../controllers/UserController');
+const TeamController = require('../controllers/TeamController');
 const authorise = require('../helpers/authorize')
 const role = require('../helpers/role')
-
 
 const router = express.Router();
 router.get('/', (req, res)=>{
@@ -129,6 +129,28 @@ router.get('/is-following/:name', (req, resp)=>{
 })
 
 
-/**********Test endpoint ***************/
+/*****************Teams endpoints **************/
+router.post('/team', (req, resp)=>{
+    TeamController.createTeam(req, resp);
+})
+
+router.put('/team', (req, resp)=>{
+    TeamController.updateTeam(req, resp);
+})
+
+router.get('/team', (req, resp)=>{
+    TeamController.findAllTeams(req, resp);
+})
+
+router.get('/team/:_id', (req, resp)=>{
+    TeamController.findTeam(req, resp);
+})
+
+router.delete('/team/:_id', (req, resp)=>{
+    TeamController.deleteTeam(req, resp);
+})
+
+
+/**********Test endpoint *************/
 
 module.exports = router;
