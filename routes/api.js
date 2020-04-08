@@ -97,23 +97,23 @@ router.delete('/laboratory/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD
 
 
 /*************users endpoints ***********/
-router.post('/user', (req, resp)=>{
+router.post('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
     UserController.createUser(req, resp);
 })
 
-router.put('/user', (req, resp)=>{
+router.put('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
     UserController.updateUser(req, resp);
 })
 
-router.get('/user/:_id', (req, resp)=>{
+router.get('/user/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
    UserController.findUser(req, resp);
 })
 
-router.get('/user', (req, resp)=>{
+router.get('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     UserController.findAllUsers(req, resp);
 })
 
-router.delete('/user/:_id', (req, resp)=>{
+router.delete('/user/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
    UserController.deleteUser(req, resp);
 })
 
@@ -130,23 +130,23 @@ router.get('/is-following/:name', (req, resp)=>{
 
 
 /*****************Teams endpoints **************/
-router.post('/team', (req, resp)=>{
+router.post('/team', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     TeamController.createTeam(req, resp);
 })
 
-router.put('/team', (req, resp)=>{
+router.put('/team', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     TeamController.updateTeam(req, resp);
 })
 
-router.get('/team', (req, resp)=>{
+router.get('/team', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     TeamController.findAllTeams(req, resp);
 })
 
-router.get('/team/:_id', (req, resp)=>{
+router.get('/team/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     TeamController.findTeam(req, resp);
 })
 
-router.delete('/team/:_id', (req, resp)=>{
+router.delete('/team/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     TeamController.deleteTeam(req, resp);
 })
 
