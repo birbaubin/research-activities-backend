@@ -2,6 +2,7 @@ const User = require('../models/user');
 const FollowedUser = require('../models/followed-user');
 const roles = require('../helpers/role');
 const userHelper = require('../helpers/user-helper');
+const bcrypt = require('bcrypt');
     
 exports.createUser = function(req, resp){
 
@@ -27,11 +28,11 @@ exports.createUser = function(req, resp){
     }
 
         
-exports.updateUser = function(req, resp){
+exports.updateUser = async function(req, resp){
 
 
-    const user = requesterUser(req);
-    User.updateOne({_id: req.body._id}, {$set: req.body, has_confirmed: true})
+    const hash = await bcrypt.hash(req.body.password, 10);
+    User.updateOne({_id: req.body._id}, {$set: req.body, has_confirmed: true, password: hash})
             .then(result=>{
                 resp.send(result);
             })
@@ -104,6 +105,20 @@ exports.deleteUser = function(req, resp){
     .catch(error=>{
         resp.send({isFollowing: false});
     })
+ }
+
+ exports.updatePassword = async function(req, resp){
+
+    const hash = await bcrypt.hash(req.body.password, 10);
+     User.updateOne({_id: req.params._id}, {$set: {password: hash}})
+        .then(result=>{
+            console.log(result);
+            resp.send(result);
+        })
+        .catch(error=>{
+            console.log(error);
+            resp.status(500).send(error);
+        })
  }
 
  

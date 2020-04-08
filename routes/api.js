@@ -105,7 +105,7 @@ router.post('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp
     UserController.createUser(req, resp);
 })
 
-router.put('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
+router.put('/user',(req, resp)=>{
     UserController.updateUser(req, resp);
 })
 
@@ -119,6 +119,10 @@ router.get('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp
 
 router.delete('/user/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
    UserController.deleteUser(req, resp);
+})
+
+router.post('/user/:_id/update-password', (req, resp)=>{
+    UserController.updatePassword(req, resp);
 })
 
 
@@ -161,6 +165,8 @@ router.post('/add-to-team/:team_id/:user_id', authorise([role.CED_HEAD, role.LAB
 router.get('/remove-from-team/:team_id/:user_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     TeamController.removeFromTeam(req, resp);
 })
+
+
 
 
 
