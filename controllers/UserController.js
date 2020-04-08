@@ -1,7 +1,16 @@
 const User = require('../models/user');
 const FollowedUser = require('../models/followed-user');
-const roles = require('../helpers/role')
+const roles = require('../helpers/role');
+const jwt = require('jsonwebtoken');
 
+
+requesterRole = function(req){
+        
+    const token = req.headers.authorization.split(' ')[1];
+    const role = jwt.decode(token).user.role;
+
+    return role
+}
 
     
 exports.createUser = function(req, resp){
@@ -14,6 +23,13 @@ exports.createUser = function(req, resp){
             resp.status(400).send({error: "Incorrect role value"})
         }
         else{
+            const token = requesterRole(req);
+        
+           if(req.body.role==roles.SEARCHER && role!=roles.LABORATORY_HEAD)
+           {
+               resp.status(401).send({message: "You are not authorized to make this action"});
+           }
+           else{
             User.create({email, password, role, has_confirmed: false})
             .then(user =>{
                 resp.send(user);
@@ -22,6 +38,8 @@ exports.createUser = function(req, resp){
                 console.log(error);
                 resp.send("error");
             });
+           }
+            
         }
          
     }
@@ -103,6 +121,8 @@ exports.deleteUser = function(req, resp){
     .catch(error=>{
         resp.send({isFollowing: false});
     })
+
+
  }
 
  

@@ -7,6 +7,7 @@ const api = require('./routes/api');
 const mongoose = require('mongoose');
 const config = require('./config');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
 
 
 const app = express();
@@ -24,3 +25,8 @@ app.listen(config.PORT, ()=>{
 
 app.use('/api', passport.authenticate('jwt', { session : false }), require('./routes/api'));
 app.use('/auth', require('./routes/auth'))
+app.get('/test', (req, resp)=>{
+    const token = req.headers.authorization.split(' ')[1];
+    resp.send(jwt.decode(token));
+    
+})

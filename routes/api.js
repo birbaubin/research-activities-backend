@@ -22,19 +22,19 @@ router.post('/university', authorise([role.CED_HEAD]), (req, resp)=>{
     UniversityController.createUniversity(req, resp);
 })
 
-router.put('/university', (req, resp)=>{
+router.put('/university', authorise([role.CED_HEAD]), (req, resp)=>{
     UniversityController.updateUniversity(req, resp);
 })
 
-router.get('/university/:_id', (req, resp)=>{
+router.get('/university/:_id', authorise([role.CED_HEAD]), (req, resp)=>{
     UniversityController.findUniversity(req, resp);
 })
 
-router.get('/university', (req, resp)=>{
+router.get('/university', authorise([role.CED_HEAD]), (req, resp)=>{
     UniversityController.findAllUniversities(req, resp);
 })
 
-router.delete('/university/:_id', (req, resp)=>{
+router.delete('/university/:_id', authorise([role.CED_HEAD]),(req, resp)=>{
     UniversityController.deleteUniversity(req, resp);
 })
 
@@ -46,28 +46,28 @@ router.get('/university/:_id/schools', (req, resp)=>{
 
 
 /*************Schools endpoints ***********/
-router.post('/school', (req, resp)=>{
+router.post('/school', authorise([role.CED_HEAD]),(req, resp)=>{
     
     SchoolController.createSchool(req, resp);
 })
 
-router.put('/school', (req, resp)=>{
+router.put('/school', authorise([role.CED_HEAD]),(req, resp)=>{
     SchoolController.updateSchool(req, resp);
 })
 
-router.get('/school/:_id', (req, resp)=>{
+router.get('/school/:_id', authorise([role.CED_HEAD]),(req, resp)=>{
    SchoolController.findSchool(req, resp);
 })
 
-router.get('/school', (req, resp)=>{
+router.get('/school', authorise([role.CED_HEAD]),(req, resp)=>{
     SchoolController.findAllSchools(req, resp);
 })
 
-router.delete('/school/:_id', (req, resp)=>{
+router.delete('/school/:_id', authorise([role.CED_HEAD]),(req, resp)=>{
    SchoolController.deleteSchool(req, resp);
 })
 
-router.get('/school/:_id/laboratories', (req, resp)=>{
+router.get('/school/:_id/laboratories', authorise([role.CED_HEAD]),(req, resp)=>{
     SchoolController.getSchoolLaboratories(req, resp);
 })
 
@@ -75,23 +75,23 @@ router.get('/school/:_id/laboratories', (req, resp)=>{
 
 
 /*************Laboratories endpoints ***********/
-router.post('/laboratory', (req, resp)=>{
+router.post('/laboratory', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
     LaboratoryController.createLaboratory(req, resp);
 })
 
-router.put('/laboratory', (req, resp)=>{
+router.put('/laboratory', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
     LaboratoryController.updateLaboratory(req, resp);
 })
 
-router.get('/laboratory/:_id', (req, resp)=>{
+router.get('/laboratory/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD, role.SEARCHER_HEAD]),(req, resp)=>{
    LaboratoryController.findLaboratory(req, resp);
 })
 
-router.get('/laboratory', (req, resp)=>{
+router.get('/laboratory', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
     LaboratoryController.findAllLaboratorys(req, resp);
 })
 
-router.delete('/laboratory/:_id', (req, resp)=>{
+router.delete('/laboratory/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
    LaboratoryController.deleteLaboratory(req, resp);
 })
 
@@ -127,4 +127,8 @@ router.post('/follow', (req, resp)=>{
 router.get('/is-following/:name', (req, resp)=>{
     UserController.isFollowing(req, resp);
 })
+
+
+/**********Test endpoint ***************/
+
 module.exports = router;
