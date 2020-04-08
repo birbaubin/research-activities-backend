@@ -4,12 +4,10 @@ const roles = require('../helpers/role');
 const jwt = require('jsonwebtoken');
 
 
-requesterRole = function(req){
+requesterUser = function(req){
         
     const token = req.headers.authorization.split(' ')[1];
-    const role = jwt.decode(token).user.role;
-
-    return role
+    return jwt.decode(token).user;
 }
 
     
@@ -23,9 +21,9 @@ exports.createUser = function(req, resp){
             resp.status(400).send({error: "Incorrect role value"})
         }
         else{
-            const token = requesterRole(req);
+            const token = requesterUser(req).role;
         
-           if(req.body.role==roles.SEARCHER && role!=roles.LABORATORY_HEAD)
+           if(req.body.role==roles.SEARCHER && role==roles.SEARCHER)
            {
                resp.status(401).send({message: "You are not authorized to make this action"});
            }
@@ -47,6 +45,8 @@ exports.createUser = function(req, resp){
         
 exports.updateUser = function(req, resp){
 
+
+    const user = requesterUser(req);
     User.updateOne({_id: req.body._id}, {$set: req.body, has_confirmed: true})
             .then(result=>{
                 resp.send(result);

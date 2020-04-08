@@ -7,7 +7,7 @@ const api = require('./routes/api');
 const mongoose = require('mongoose');
 const config = require('./config');
 const passport = require('passport');
-const jwt = require('jsonwebtoken');
+
 
 
 const app = express();
