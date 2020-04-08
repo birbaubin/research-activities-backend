@@ -95,6 +95,10 @@ router.delete('/laboratory/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD
    LaboratoryController.deleteLaboratory(req, resp);
 })
 
+router.get('/laboratory/:_id/teams', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
+    LaboratoryController.getTeamsOfLaboratory(req, resp);
+})
+
 
 /*************users endpoints ***********/
 router.post('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{

@@ -1,6 +1,7 @@
 const Laboratory = require('../models/laboratory');
 const School = require('../models/school');
 const userHelper = require('../helpers/user-helper');
+const Team = require('../models/team');
     
 exports.createLaboratory = function(req, resp){
 
@@ -98,6 +99,18 @@ exports.deleteLaboratory = function(req, resp){
                     console.log(error);
                     resp.send(error);
                 })
+ }
+
+ exports.getTeamsOfLaboratory = function(req, resp){
+
+    Team.find({laboratory_id: req.params._id})
+        .then(teams=>{
+            resp.send(teams);
+        })
+        .catch(error=>{
+            console.log(error);
+            resp.status(500).send(error);
+        })
  }
 
  
