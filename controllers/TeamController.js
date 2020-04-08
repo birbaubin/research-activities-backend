@@ -1,5 +1,7 @@
 const Team = require('../models/team');
 const Laboratory = require('../models/laboratory');
+const TeamMemberShip = require('../models/team-membership');
+const User = require('../models/user');
 
     
 exports.createTeam = function(req, resp){
@@ -64,6 +66,37 @@ exports.deleteTeam = function(req, resp){
                     resp.send(error);
         })
      
+ }
+
+ exports.addUserToTeam = async function(req, resp){
+
+    try{
+        TeamMemberShip.create({user_id: req.params.user_id, team_id: req.params.team_id, active: true})
+                        .then(result=>{
+                            console.log(result);
+                            resp.send(result);
+                        })
+                        .catch(error=>{
+                            resp.status(500).send(error);
+                            console.log(error);
+                        })
+    
+    }
+    catch(error){
+        console.log(error)
+        resp.status(500).send(error);
+    }
+               
+ }
+
+ exports.removeFromTeam = function(req, resp){
+     TeamMemberShip.updateMany({user_id: req.params.user_id, team_id: req.params.team_id, active: true}, {active: false})
+                    .then(result=>{
+                        resp.send(result);
+                    })
+                    .catch(error=>{
+                        resp.status(500).send(error);
+                    })
  }
 
  

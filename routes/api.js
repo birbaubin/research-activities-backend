@@ -154,6 +154,15 @@ router.delete('/team/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (r
     TeamController.deleteTeam(req, resp);
 })
 
+router.post('/add-to-team/:team_id/:user_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
+    TeamController.addUserToTeam(req, resp);
+})
+
+router.get('/remove-from-team/:team_id/:user_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
+    TeamController.removeFromTeam(req, resp);
+})
+
+
 
 /**********Test endpoint *************/
 
