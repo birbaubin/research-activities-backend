@@ -99,6 +99,10 @@ router.get('/laboratory/:_id/teams', authorise([role.CED_HEAD, role.LABORATORY_H
     LaboratoryController.getTeamsOfLaboratory(req, resp);
 })
 
+router.get('/laboratory-of-head/:head_id', (req, resp)=>{
+    LaboratoryController.getLaboratoryOfHead(req, resp);
+})
+
 
 /*************users endpoints ***********/
 router.post('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{

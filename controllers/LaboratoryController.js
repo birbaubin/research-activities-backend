@@ -113,6 +113,17 @@ exports.deleteLaboratory = function(req, resp){
         })
  }
 
+ exports.getLaboratoryOfHead = function(req, resp){
+
+     Laboratory.find({head_id: req.params.head_id})
+        .then(result=>{
+            resp.send(result);
+        })
+        .catch(error=>{
+            resp.status(500).send(error);
+        })
+ }
+
  
 
 
