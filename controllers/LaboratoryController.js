@@ -134,5 +134,16 @@ exports.deleteLaboratory = function(req, resp){
  }
 
  
-
+exports.associateHeadToLaboratory = function(req, resp){
+    
+    Laboratory.findById(req.params.lab_id)
+                .then(result=>{
+                    result.head_id = req.params.head_id;
+                    result.save();
+                    resp.send(result)
+                })
+                .catch(error=>{
+                    resp.status(500).send(error);
+                })
+}
 

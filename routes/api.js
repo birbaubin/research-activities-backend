@@ -14,7 +14,6 @@ router.get('/', (req, res)=>{
 })
 
 
-
 //TODO: change naming convention
 
 /*************Universities endpoints ***********/
@@ -74,6 +73,7 @@ router.get('/school/:_id/laboratories', authorise([role.CED_HEAD]),(req, resp)=>
 
 
 
+
 /*************Laboratories endpoints ***********/
 router.post('/laboratory', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
     LaboratoryController.createLaboratory(req, resp);
@@ -107,6 +107,13 @@ router.get('/free-laboratories', (req, resp)=>{
     LaboratoryController.getFreeLaboratories(req, resp);
 })
 
+router.get('/entitle-laboratory/:head_id/:lab_id', (req, resp)=>{
+    LaboratoryController.associateHeadToLaboratory(req, resp)
+})
+
+
+
+
 
 /*************users endpoints ***********/
 router.post('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
@@ -134,6 +141,9 @@ router.post('/user/:_id/update-password', (req, resp)=>{
 })
 
 
+
+
+
 /****************Followed users endpoints  ********/
 
 router.post('/follow', (req, resp)=>{
@@ -143,6 +153,8 @@ router.post('/follow', (req, resp)=>{
 router.get('/is-following/:name', (req, resp)=>{
     UserController.isFollowing(req, resp);
 })
+
+
 
 
 /*****************Teams endpoints **************/
@@ -166,7 +178,7 @@ router.delete('/team/:_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (r
     TeamController.deleteTeam(req, resp);
 })
 
-router.post('/add-to-team/:team_id/:user_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
+router.get('/add-to-team/:team_id/:user_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     TeamController.addUserToTeam(req, resp);
 })
 
@@ -176,8 +188,5 @@ router.get('/remove-from-team/:team_id/:user_id', authorise([role.CED_HEAD, role
 
 
 
-
-
-/**********Test endpoint *************/
 
 module.exports = router;
