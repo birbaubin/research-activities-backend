@@ -1,10 +1,12 @@
 const Laboratory = require('../models/laboratory');
 const School = require('../models/school');
-
+const userHelper = require('../helpers/user-helper');
     
 exports.createLaboratory = function(req, resp){
 
-        Laboratory.create(req.body)
+        const lab = req.body;
+        lab.head_id =  userHelper.requesterUser(req)._id;
+        Laboratory.create(lab)
         .then(laboratory =>{
             resp.send(laboratory);
         })

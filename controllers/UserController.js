@@ -1,15 +1,7 @@
 const User = require('../models/user');
 const FollowedUser = require('../models/followed-user');
 const roles = require('../helpers/role');
-const jwt = require('jsonwebtoken');
-
-
-requesterUser = function(req){
-        
-    const token = req.headers.authorization.split(' ')[1];
-    return jwt.decode(token).user;
-}
-
+const userHelper = require('../helpers/user-helper');
     
 exports.createUser = function(req, resp){
 
@@ -21,7 +13,7 @@ exports.createUser = function(req, resp){
             resp.status(400).send({error: "Incorrect role value"})
         }
         else{
-            const token = requesterUser(req).role;
+            const token = userHelper.requesterUser(req).role;
         
            if(req.body.role==roles.SEARCHER && role==roles.SEARCHER)
            {
@@ -37,9 +29,7 @@ exports.createUser = function(req, resp){
                 resp.send("error");
             });
            }
-            
-        }
-         
+        }  
     }
 
         
@@ -113,7 +103,6 @@ exports.deleteUser = function(req, resp){
 
  exports.isFollowing = function(req, resp){
 
-
     FollowedUser.findOne({name: req.params.name}).then(foundUser=>{
         console.log(foundUser._doc);
         resp.send({isFollowing: true, user: JSON.parse(foundUser._doc.otherProperties) });
@@ -121,8 +110,6 @@ exports.deleteUser = function(req, resp){
     .catch(error=>{
         resp.send({isFollowing: false});
     })
-
-
  }
 
  

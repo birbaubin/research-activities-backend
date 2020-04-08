@@ -10,6 +10,11 @@ const LaboratorySchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'School',
         required: [true]
+    },
+    head_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     }
 });
 
