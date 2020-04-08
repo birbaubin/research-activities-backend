@@ -2,7 +2,9 @@ const User = require('../models/user');
 const FollowedUser = require('../models/followed-user');
 const roles = require('../helpers/role');
 const userHelper = require('../helpers/user-helper');
+const TeamMemberShip = require('../models/team-membership');
 const bcrypt = require('bcrypt');
+
     
 exports.createUser = function(req, resp){
 
@@ -121,6 +123,10 @@ exports.deleteUser = function(req, resp){
         })
  }
 
- 
+
+ exports.getFreSearchers = function(req, resp){
+
+    freeSearchersIds = TeamMemberShip.find({activ})
+ }
 
 

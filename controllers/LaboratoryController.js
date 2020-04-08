@@ -6,14 +6,13 @@ const Team = require('../models/team');
 exports.createLaboratory = function(req, resp){
 
         const lab = req.body;
-        lab.head_id =  userHelper.requesterUser(req)._id;
         Laboratory.create(lab)
         .then(laboratory =>{
             resp.send(laboratory);
         })
         .catch(error=>{
             console.log(error);
-            resp.send("error");
+            resp.status(500).send(error);
         });
     }
 
@@ -26,7 +25,7 @@ exports.updateLaboratory = function(req, resp){
             })
             .catch(error=>{
                 console.log(error);
-                resp.send(error)
+                resp.status(500).send(error)
             })
     
 }
@@ -122,6 +121,16 @@ exports.deleteLaboratory = function(req, resp){
         .catch(error=>{
             resp.status(500).send(error);
         })
+ }
+
+ exports.getFreeLaboratories = function(req, resp){
+     Laboratory.$where('this.head_id === undefined').find().then(result=>{
+         resp.send(result);
+     })
+     .catch(error=>{
+         resp.status(500).send(result);
+     })
+   
  }
 
  

@@ -103,6 +103,10 @@ router.get('/laboratory-of-head/:head_id', (req, resp)=>{
     LaboratoryController.getLaboratoryOfHead(req, resp);
 })
 
+router.get('/free-laboratories', (req, resp)=>{
+    LaboratoryController.getFreeLaboratories(req, resp);
+})
+
 
 /*************users endpoints ***********/
 router.post('/user', authorise([role.CED_HEAD, role.LABORATORY_HEAD]),(req, resp)=>{
