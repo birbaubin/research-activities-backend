@@ -140,6 +140,10 @@ router.post('/user/:_id/update-password', (req, resp)=>{
     UserController.updatePassword(req, resp);
 })
 
+router.get('/lab-heads', (req, resp)=>{
+    UserController.getLabHeads(req, resp);
+})
+
 
 
 

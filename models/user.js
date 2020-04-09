@@ -30,6 +30,10 @@ const UserSchema = new Schema({
   has_confirmed: {
     type: Boolean,
     required: true
+  },
+  generatedPassword:{
+    type: String,
+    required: false
   }
 });
 
