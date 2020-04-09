@@ -125,14 +125,8 @@ exports.getLabHeads = async function(req, resp){
     
 
     try{
-        confirmedLabHeads = await User.find({has_confirmed: true, role: roles.LABORATORY_HEAD});
-        unconfirmedLabHeads = await User.find({has_confirmed: false, role: roles.LABORATORY_HEAD});
-        console.log(unconfirmedLabHeads);
-        const results = {
-            confirmed_lab_heads: confirmedLabHeads,
-            unconfirmed_lab_heads: unconfirmedLabHeads
-        }
-        resp.send(results);
+        const labHeads = await User.find({ role: roles.LABORATORY_HEAD});
+        resp.send({labHeads});
     }
     catch(error){
         resp.status(500).send(error)
