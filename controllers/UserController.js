@@ -32,8 +32,7 @@ exports.createUser = function(req, resp){
         
 exports.updateUser = async function(req, resp){
 
-    const hash = await bcrypt.hash(req.body.password, 10);
-    User.updateOne({_id: req.body._id}, {$set: req.body, has_confirmed: true, password: hash, generatedPassword: ""})
+    User.updateOne({_id: req.body._id}, {$set: req.body, has_confirmed: true, generatedPassword: ""})
             .then(result=>{
                 resp.send(result);
             })
