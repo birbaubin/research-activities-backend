@@ -113,7 +113,12 @@ exports.deleteUser = function(req, resp){
  }
 
  exports.getFollowedUsers = function(req, resp){
-
+    FollowedUser.find().then(result=>{
+        resp.send(result);
+    })
+    .catch(error=>{
+        resp.status(500).send(error);
+    })
  }
 
  exports.updatePassword = async function(req, resp){
