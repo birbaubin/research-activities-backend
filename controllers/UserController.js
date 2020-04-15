@@ -92,7 +92,7 @@ exports.deleteUser = function(req, resp){
 
  exports.followUser = function(req, resp){
 
-    FollowedUser.create({name: req.body.name, otherProperties: JSON.stringify(req.body), publications: req.body.publications}).then(result=>{
+    FollowedUser.create(req.body).then(result=>{
         resp.send({status: "User followed"});
     })
     .catch(error=>{
@@ -105,11 +105,15 @@ exports.deleteUser = function(req, resp){
 
     FollowedUser.findOne({name: req.params.name}).then(foundUser=>{
         console.log(foundUser._doc);
-        resp.send({isFollowing: true, user: JSON.parse(foundUser._doc.otherProperties) });
+        resp.send({isFollowing: true, user: foundUser });
     })
     .catch(error=>{
         resp.send({isFollowing: false});
     })
+ }
+
+ exports.getFollowedUsers = function(req, resp){
+
  }
 
  exports.updatePassword = async function(req, resp){

@@ -158,6 +158,10 @@ router.get('/is-following/:name', (req, resp)=>{
     UserController.isFollowing(req, resp);
 })
 
+router.get('/followed-users', (req, resp)=>{
+    UserController.getFollowedUsers(req, resp);
+})
+
 
 
 

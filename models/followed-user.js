@@ -6,19 +6,34 @@ const Publication = require('./publication');
 
 const FollowedUserSchema = new Schema({
 
-  
+
+  _filled: Boolean,
+  affiliation: String,
+  citedby: Number,
+  citedby5y: Number,
+  coauthors: [
+    {
+      _filled: Boolean,
+      affiliation: String,
+      id: String,
+      name: String
+    }
+  ],
+  email: String,
+  hindex: Number,
+  hindex5y: Number,
+  i10index: Number,
+  id: String,
+  interests: [String],
   name : {
-    type : String,
-    required : true
-  },
-  otherProperties : {
     type : String,
     required : true
   },
   publications: {
     type: [Publication.PublicationSchema],
-    required: false
-  }
+  
+  },
+  url_picture: String
 
 });
 
