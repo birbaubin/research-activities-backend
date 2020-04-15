@@ -92,8 +92,13 @@ exports.deleteUser = function(req, resp){
 
  exports.followUser = function(req, resp){
 
-    FollowedUser.create({name: req.body.name, otherProperties: JSON.stringify(req.body)})
-    resp.send({status: "User followed"});
+    FollowedUser.create({name: req.body.name, otherProperties: JSON.stringify(req.body), publications: req.body.publications}).then(result=>{
+        resp.send({status: "User followed"});
+    })
+    .catch(error=>{
+        resp.status(500).send(error);
+    })
+   
  }
 
  exports.isFollowing = function(req, resp){

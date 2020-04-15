@@ -13,7 +13,7 @@ const PublicationSchema = new Schema({
     },
     cited_by: {
         type: Number,
-        required: true
+        required: false
     },
     id_citations: {
         type: String,
