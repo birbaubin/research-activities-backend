@@ -28,4 +28,5 @@ const PublicationSchema = new Schema({
 
 
 const Publication = mongoose.model('publication', PublicationSchema);
-module.exports = Publication;
+module.exports.Publication = Publication;
+module.exports.PublicationSchema = PublicationSchema;
