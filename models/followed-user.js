@@ -14,6 +14,7 @@ const FollowedUserSchema = new Schema({
     type : String,
     required : true
   }
+
 });
 
 
