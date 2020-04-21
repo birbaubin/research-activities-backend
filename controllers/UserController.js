@@ -92,13 +92,20 @@ exports.deleteUser = function(req, resp){
 
  exports.followUser = function(req, resp){
 
+    //console.log(req.body);
     FollowedUser.create(req.body).then(result=>{
+        console.log(result);
         resp.send({status: "User followed"});
     })
     .catch(error=>{
         resp.status(500).send(error);
     })
    
+ }
+
+
+ exports.unfollowUser = function(req, resp){
+     FollowedUser.find
  }
 
  exports.isFollowing = function(req, resp){

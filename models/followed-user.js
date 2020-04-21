@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
 const Publication = require('./publication');
+const User = require('./user');
 
 
 const FollowedUserSchema = new Schema({
@@ -33,8 +34,12 @@ const FollowedUserSchema = new Schema({
     type: [Publication.PublicationSchema],
   
   },
-  url_picture: String
-
+  url_picture: String,
+  user_id:{
+    type: Schema.Types.ObjectId,
+    ref: "User"
+  
+  } 
 });
 
 const FollowedUserModel = mongoose.model('followed-user',FollowedUserSchema);

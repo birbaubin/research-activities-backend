@@ -154,6 +154,7 @@ router.post('/follow', (req, resp)=>{
     UserController.followUser(req, resp);
 })
 
+
 router.get('/is-following/:name', (req, resp)=>{
     UserController.isFollowing(req, resp);
 })
