@@ -105,7 +105,12 @@ exports.deleteUser = function(req, resp){
 
 
  exports.unfollowUser = function(req, resp){
-     FollowedUser.find
+     FollowedUser.findByIdAndDelete(req.params._id).then(result=>{
+         resp.send({status: "User unfollowed"});
+     })
+     .catch(error=>{
+         resp.status(500).send(error);
+     })
  }
 
  exports.isFollowing = function(req, resp){
