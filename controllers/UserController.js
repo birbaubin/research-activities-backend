@@ -4,6 +4,9 @@ const roles = require('../helpers/role');
 const userHelper = require('../helpers/user-helper');
 const TeamMemberShip = require('../models/team-membership');
 const bcrypt = require('bcrypt');
+const Laboratory = require("../models/laboratory");
+const Team = require('../models/team');
+
 
     
 exports.createUser = function(req, resp){
@@ -112,6 +115,7 @@ exports.deleteUser = function(req, resp){
          resp.status(500).send(error);
      })
  }
+ 
 
  exports.isFollowing = function(req, resp){
 
@@ -125,13 +129,72 @@ exports.deleteUser = function(req, resp){
  }
 
  exports.getFollowedUsers = function(req, resp){
-    FollowedUser.find().then(result=>{
-        resp.send(result);
-    })
-    .catch(error=>{
-        resp.status(500).send(error);
-    })
+
+
+    if(req.param('lab_name')==undefined){
+        FollowedUser.find().then(result=>{
+            resp.send(result);
+        })
+        .catch(error=>{
+            resp.status(500).send(error);
+        })
+    }
+
+    else{
+        let userIds = [];
+        let memberships = [];
+       Laboratory.findOne({name: req.param('lab_name')})
+                .then(laboratory=>{
+                    //console.log(laboratory);
+                   return Team.find({laboratory_id: laboratory._id})
+                })
+                .then(teams=>{
+                
+                    teams.forEach(team=>{
+                        memberships.push(TeamMemberShip.findOne({team_id: team._id, active: true}));
+                    })
+                
+                    return Promise.all(memberships);
+                })
+                .then(memberships=>{
+                    console.log(memberships);
+                    memberships.forEach(membership=>{
+                        userIds.push(membership.user_id);
+                    })
+
+                    console.log(userIds);
+                    let followedUsers = [];
+                    userIds.forEach(userId=>{
+                        followedUsers.push(FollowedUser.findOne({user_id: userId}));
+                    })
+
+                    return Promise.all(followedUsers);
+                })
+                .then(followedUsers=>{
+                    console.log(followedUsers);
+                    resp.send(followedUsers);
+                })
+                 
+                .catch(error=>{
+                    resp.status(500).send(error);
+                    console.log(error);
+                });
+
+    }
+   
  }
+
+
+ exports.getFollowedUsersOfLab = function(req, resp){
+
+    resp.send(req);
+
+    /*Laboratory.find({name: req.query.lab_name}).then(result=>{
+        console.log(result);
+        resp.send(result);
+    })*/
+ }
+
 
  exports.updatePassword = async function(req, resp){
 

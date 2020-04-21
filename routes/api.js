@@ -170,6 +170,8 @@ router.get('/followed-users', (req, resp)=>{
 
 
 
+
+
 /*****************Teams endpoints **************/
 router.post('/team', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     TeamController.createTeam(req, resp);
@@ -198,6 +200,7 @@ router.get('/add-to-team/:team_id/:user_id', authorise([role.CED_HEAD, role.LABO
 router.get('/remove-from-team/:team_id/:user_id', authorise([role.CED_HEAD, role.LABORATORY_HEAD]), (req, resp)=>{
     TeamController.removeFromTeam(req, resp);
 })
+
 
 
 
