@@ -145,8 +145,12 @@ exports.deleteUser = function(req, resp){
         let memberships = [];
        Laboratory.findOne({name: req.param('lab_name')})
                 .then(laboratory=>{
-                    //console.log(laboratory);
+                if(laboratory == null)
+                    resp.status(404).send({message: "Laboratory not found"});
+                else
+                   
                    return Team.find({laboratory_id: laboratory._id})
+                   
                 })
                 .then(teams=>{
                 
