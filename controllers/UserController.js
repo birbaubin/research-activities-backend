@@ -6,6 +6,7 @@ const TeamMemberShip = require('../models/team-membership');
 const bcrypt = require('bcrypt');
 const Laboratory = require("../models/laboratory");
 const Team = require('../models/team');
+const fs = require('fs');
 
 
     
@@ -20,7 +21,7 @@ exports.createUser = function(req, resp){
         }
         else{
         
-            User.create({email, password, role, has_confirmed: false, generatedPassword: password})
+            User.create({email, password, role, has_confirmed: false, generatedPassword: password, profile_picture: "default.png"})
             .then(user =>{
                 resp.send(user);
             })
@@ -189,16 +190,6 @@ exports.deleteUser = function(req, resp){
  }
 
 
- exports.getFollowedUsersOfLab = function(req, resp){
-
-    resp.send(req);
-
-    /*Laboratory.find({name: req.query.lab_name}).then(result=>{
-        console.log(result);
-        resp.send(result);
-    })*/
- }
-
 
  exports.updatePassword = async function(req, resp){
 
@@ -228,4 +219,37 @@ exports.getLabHeads = async function(req, resp){
                             
 }
 
+
+exports.updateProfilePicture = async function(req, resp){
+    
+
+    let file = req.files.file;
+    let user = userHelper.requesterUser(req);
+    let userFromDB = await User.findById(user._id, "profile_picture");
+    if(userFromDB.profile_picture!=undefined && userFromDB.profile_picture!="default.png"){
+        fs.unlink(__dirname+"/../public/images/"+userFromDB.profile_picture, (err)=>{
+            if(err)
+                resp.status(500).send(err)
+        });
+    }
+        
+    let fileUrl = user._id+file.name;
+    let filePath = __dirname+"/../public/images/"+fileUrl;
+    file.mv(filePath, function(err){
+        if(err)
+            resp.status(500).send(err);
+        else{
+            User.updateOne({_id: user._id}, {$set: {profile_picture: fileUrl}}).then(done=>{
+                resp.send({message: "file uploaded"}); 
+            })
+            .catch(error=>{
+                resp.status(500).send(error);
+            })
+           
+        }   
+            
+
+    });
+    
+}
 

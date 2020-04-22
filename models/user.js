@@ -34,7 +34,8 @@ const UserSchema = new Schema({
   generatedPassword:{
     type: String,
     required: false
-  }
+  },
+  profile_picture: String
 });
 
 

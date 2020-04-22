@@ -146,6 +146,10 @@ router.get('/lab-heads', (req, resp)=>{
 })
 
 
+router.post('/upload-pp', (req, resp)=>{
+    UserController.updateProfilePicture(req, resp);
+})
+
 
 
 
