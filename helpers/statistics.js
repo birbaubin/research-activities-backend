@@ -8,7 +8,7 @@ exports.getStatistics = function(req, resp){
         years.push(i);
     
 
-    FollowedUser.find()
+    FollowedUser.find({}, "name publications")
                 .then(followedUsers=>{
                     followedUsers.forEach(user=>{
                         let publicationsStatistics = {};
