@@ -7,6 +7,7 @@ const UserController = require('../controllers/UserController');
 const TeamController = require('../controllers/TeamController');
 const authorise = require('../helpers/authorize')
 const role = require('../helpers/role')
+const statisticsHelper = require('../helpers/statistics');
 
 const router = express.Router();
 router.get('/', (req, res)=>{
@@ -202,7 +203,9 @@ router.get('/remove-from-team/:team_id/:user_id', authorise([role.CED_HEAD, role
 })
 
 
-
+router.get('/statistics', (req, resp)=>{
+    statisticsHelper.getStatistics(req, resp);
+})
 
 
 module.exports = router;
