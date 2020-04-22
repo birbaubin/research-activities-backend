@@ -45,13 +45,28 @@ exports.findTeam = function(req, resp){
 
 exports.findAllTeams = function(req, resp){
 
-   Team.find().then(teams=>{
-       resp.send(teams);
-   })
-   .catch(error=>{
-       console.log(error);
-       resp.send("error");
-   })
+    Team.find()
+    .then(teams=>{
+        teams.forEach(team => {
+                Laboratory.findById(team.laboratory_id)
+                    .then(laboratory=>{
+
+                        team._doc.laboratory = {
+                            name: laboratory.name
+                        }
+                        //console.log(schools);  
+                    })
+        });
+        
+           setTimeout(() => {
+                resp.send(teams);
+           }, 200); 
+       
+        })
+    .catch(error=>{
+        console.log(error);
+        resp.send(error);
+    })
     
 }
 
