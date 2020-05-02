@@ -29,7 +29,7 @@ const UserSchema = new Schema({
   },
   has_confirmed: {
     type: Boolean,
-    required: true
+    required: false
   },
   generatedPassword:{
     type: String,
