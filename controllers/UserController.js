@@ -21,7 +21,7 @@ exports.createUser = function(req, resp){
         }
         else{
         
-            User.create({email, password, role, has_confirmed: false, generatedPassword: password, profile_picture: "default.png"})
+            User.create({email, password, role, has_confirmed: false, generatedPassword: password})
             .then(user =>{
                 resp.send(user);
             })
@@ -240,7 +240,7 @@ exports.updateProfilePicture = async function(req, resp){
             resp.status(500).send(err);
         else{
             User.updateOne({_id: user._id}, {$set: {profile_picture: fileUrl}}).then(done=>{
-                resp.send({message: "file uploaded"}); 
+                resp.send({message: "file uploaded",profile_picture: fileUrl}); 
             })
             .catch(error=>{
                 resp.status(500).send(error);
