@@ -43,6 +43,13 @@ const seedUsers = () =>
     )
   );
 
+const confirmeUsers = () =>
+  Promise.all(
+    users.map((user) =>
+      User.updateOne({ email: user.email }, { $set: { hasConfirmed: true } })
+    )
+  );
+
 const seedUniversities = () =>
   Promise.all(universities.map((university) => University.create(university)));
 
@@ -86,6 +93,8 @@ const timeDelay = () => {
 
 clearData()
   .then(() => seedUsers())
+  .then(() => timeDelay())
+  .then(() => confirmeUsers())
   .then(() => timeDelay())
   .then(() => seedUniversities())
   .then(() => timeDelay())
