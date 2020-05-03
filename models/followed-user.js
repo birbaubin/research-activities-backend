@@ -1,13 +1,10 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
-const Publication = require('./publication');
-const User = require('./user');
-
+const Publication = require("./publication");
+const User = require("./user");
 
 const FollowedUserSchema = new Schema({
-
-
   _filled: Boolean,
   affiliation: String,
   citedby: Number,
@@ -17,8 +14,8 @@ const FollowedUserSchema = new Schema({
       _filled: Boolean,
       affiliation: String,
       id: String,
-      name: String
-    }
+      name: String,
+    },
   ],
   email: String,
   hindex: Number,
@@ -26,22 +23,20 @@ const FollowedUserSchema = new Schema({
   i10index: Number,
   id: String,
   interests: [String],
-  name : {
-    type : String,
-    required : true
+  name: {
+    type: String,
+    required: true,
   },
   publications: {
     type: [Publication.PublicationSchema],
-  
   },
   url_picture: String,
-  user_id:{
+  user_id: {
     type: Schema.Types.ObjectId,
-    ref: "User"
-  
-  } 
+    ref: "User",
+  },
 });
 
-const FollowedUserModel = mongoose.model('followed-user',FollowedUserSchema);
+const FollowedUserModel = mongoose.model("followed-user", FollowedUserSchema);
 
 module.exports = FollowedUserModel;
