@@ -140,6 +140,9 @@ exports.isFollowing = (req, resp) => {
 exports.getFollowedUsers = async (req, resp) => {
   const laboratoryAbbreviation = req.param("laboratory_abbreviation");
   const teamAbbreviation = req.param("team_abbreviation");
+  
+  const followedUsers = await FollowedUser.find();
+  const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
   if (!laboratoryAbbreviation && !teamAbbreviation) {
     resp.send(await FollowedUser.find());
@@ -156,7 +159,11 @@ exports.getFollowedUsers = async (req, resp) => {
 
     const teamsMemberShips = await Promise.all(
       teams.map((team) =>
-        TeamMemberShip.find({ team_id: team._id, active: true })
+        TeamMemberShip.find({
+          team_id: team._id,
+          active: true,
+          user_id: { $in: followedUsersIds },
+        })
       )
     );
 
@@ -177,6 +184,7 @@ exports.getFollowedUsers = async (req, resp) => {
     const teamsMemberShips = await TeamMemberShip.find({
       team_id: team._id,
       active: true,
+      user_id: { $in: followedUsersIds },
     });
 
     console.log("teamsMemberShips");
@@ -255,10 +263,13 @@ exports.updateProfilePicture = async (req, resp) => {
 
 exports.getFilteringOptions = async (req, resp) => {
   const teams = await Team.find();
+  const followedUsers = await FollowedUser.find();
+  const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
   const teamsOptionsPromises = teams.map(async (team) => {
     const teamsMemberShips = await TeamMemberShip.find({
       team_id: team._id,
+      user_id: { $in: followedUsersIds },
       active: true,
     });
 
@@ -278,7 +289,11 @@ exports.getFilteringOptions = async (req, resp) => {
 
     const teamsMemberShips = await Promise.all(
       teams.map((team) =>
-        TeamMemberShip.find({ team_id: team._id, active: true })
+        TeamMemberShip.find({
+          team_id: team._id,
+          user_id: { $in: followedUsersIds },
+          active: true,
+        })
       )
     );
 
