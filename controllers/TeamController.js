@@ -38,19 +38,30 @@ exports.findTeam = function (req, resp) {
 
 exports.findAllTeams = function (req, resp) {
   Team.find()
-    .then((teams) => {
-      teams.forEach((team) => {
-        Laboratory.findById(team.laboratory_id).then((laboratory) => {
-          team._doc.laboratory = {
-            name: laboratory.name,
-          };
-          //console.log(schools);
-        });
-      });
+    .then((teams) =>
+      Promise.all(
+        teams.map(async (team) => {
+          const members = await TeamMemberShip.find({
+            team_id: team._id,
+            active: true,
+          }).then((teamsMemberships) =>
+            Promise.all(
+              teamsMemberships.map(({ user_id }) =>
+                User.findOne({ _id: user_id })
+              )
+            )
+          );
 
-      setTimeout(() => {
-        resp.send(teams);
-      }, 200);
+          return {
+            ...team._doc,
+            laboratory: await Laboratory.findById(team.laboratory_id),
+            members,
+          };
+        })
+      )
+    )
+    .then((laboratories) => {
+      resp.send(laboratories);
     })
     .catch((error) => {
       console.log(error);
