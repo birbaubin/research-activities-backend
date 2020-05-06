@@ -17,6 +17,7 @@ const University = require("../models/university");
 const School = require("../models/school");
 const Laboratory = require("../models/laboratory");
 const Team = require("../models/team");
+const FollowedUser = require("../models/followed-user");
 
 const users = require("./data/users");
 const universities = require("./data/universities");
@@ -31,6 +32,7 @@ const clearData = () =>
     School.deleteMany(),
     Laboratory.deleteMany(),
     Team.deleteMany(),
+    FollowedUser.deleteMany(),
   ]);
 
 const seedUsers = () =>
