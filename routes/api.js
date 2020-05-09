@@ -221,4 +221,6 @@ router.get(
 
 router.get("/statistics", statisticsHelper.getStatistics);
 
+router.get("/all-statistics", statisticsHelper.getAllStatistics);
+
 module.exports = router;
