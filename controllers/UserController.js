@@ -6,7 +6,7 @@ const FollowedUser = require("../models/followed-user");
 const TeamMemberShip = require("../models/team-membership");
 const Laboratory = require("../models/laboratory");
 const Team = require("../models/team");
-
+const mailSender = require("../helpers/mail-sender");
 const roles = require("../helpers/role");
 const userHelper = require("../helpers/user-helper");
 
@@ -24,12 +24,16 @@ exports.createUser = (req, resp) => {
       generatedPassword: password,
     })
       .then((user) => {
+        return mailSender.sendEmail(user)
+      })
+      .then((user)=>{
         resp.send(user);
       })
       .catch((error) => {
         console.log(error);
-        resp.send("error");
+        resp.status(500).send(error);
       });
+
   }
 };
 
@@ -196,7 +200,7 @@ exports.getFollowedUsers = async (req, resp) => {
 
     resp.send(followedUsers);
   }
-};
+}
 
 exports.updatePassword = async (req, resp) => {
   const hash = await bcrypt.hash(req.body.password, 10);
