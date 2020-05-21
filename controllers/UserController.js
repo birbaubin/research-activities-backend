@@ -69,10 +69,13 @@ exports.findUser = (req, resp) => {
         )
       );
 
+      const correspondingFollowedUser = await FollowedUser.findOne({user_id: user._id});
+
       resp.send({
         ...user._doc,
         laboratoriesHeaded,
         teamsMemberships,
+        correspondingFollowedUser
       });
     })
     .catch((error) => {

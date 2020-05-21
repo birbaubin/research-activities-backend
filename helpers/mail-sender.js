@@ -37,6 +37,5 @@ exports.sendEmail = function(user){
     })
 
     return promise;
-    
-    //console.log("You are calling the mail sender");
+  
 }
