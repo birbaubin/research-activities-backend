@@ -35,15 +35,49 @@ const clearData = () =>
     FollowedUser.deleteMany(),
   ]);
 
-const seedUsers = () =>
-  Promise.all(
-    users.map((user) =>
+const seedCEDHead = async () => {
+  const seeding = users
+    .filter(({ role }) => role === "CED_HEAD")
+    .map((user) =>
       User.create({
         ...user,
         password: user.email.split("@")[0],
       })
-    )
-  );
+    );
+
+  return Promise.all(seeding);
+};
+
+const seedLaboratoryHeads = async () => {
+  const CEDHeads = await User.find({ role: "CED_HEAD" });
+  const seeding = users
+    .filter(({ role }) => role === "LABORATORY_HEAD")
+    .map((user) =>
+      User.create({
+        ...user,
+        password: user.email.split("@")[0],
+        creatorId: CEDHeads[0]._id,
+      })
+    );
+
+  return Promise.all(seeding);
+};
+
+const seedResearchers = async () => {
+  const LaboratoryHeads = await User.find({ role: "LABORATORY_HEAD" });
+
+  const seeding = users
+    .filter(({ role }) => role === "RESEARCHER")
+    .map((user) =>
+      User.create({
+        ...user,
+        password: user.email.split("@")[0],
+        creatorId: LaboratoryHeads[0]._id,
+      })
+    );
+
+  return Promise.all(seeding);
+};
 
 const confirmeUsers = () =>
   Promise.all(
@@ -94,7 +128,11 @@ const timeDelay = () => {
 };
 
 clearData()
-  .then(() => seedUsers())
+  .then(() => seedCEDHead())
+  .then(() => timeDelay())
+  .then(() => seedLaboratoryHeads())
+  .then(() => timeDelay())
+  .then(() => seedResearchers())
   .then(() => timeDelay())
   .then(() => confirmeUsers())
   .then(() => timeDelay())
