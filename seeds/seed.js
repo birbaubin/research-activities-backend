@@ -18,6 +18,7 @@ const School = require("../models/school");
 const Laboratory = require("../models/laboratory");
 const Team = require("../models/team");
 const FollowedUser = require("../models/followed-user");
+const TeamMembership = require("../models/team-membership");
 
 const users = require("./data/users");
 const universities = require("./data/universities");
@@ -33,6 +34,7 @@ const clearData = () =>
     Laboratory.deleteMany(),
     Team.deleteMany(),
     FollowedUser.deleteMany(),
+    TeamMembership.deleteMany(),
   ]);
 
 const seedCEDHead = async () => {
