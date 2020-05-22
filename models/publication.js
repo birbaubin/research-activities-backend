@@ -2,25 +2,17 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const PublicationSchema = new Schema({
-  _filled: {
-    type: Boolean,
-    required: true,
+  title: {
+    type: String,
   },
-  bib: {
-    title: String,
-    year: Number,
+  authors: {
+    type: Array,
   },
-  cited_by: {
+  citation: {
     type: Number,
-    required: false,
   },
-  id_citations: {
+  year: {
     type: String,
-    required: true,
-  },
-  source: {
-    type: String,
-    required: true,
   },
 });
 
