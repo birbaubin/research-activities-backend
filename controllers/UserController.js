@@ -11,7 +11,7 @@ const roles = require("../helpers/role");
 const userHelper = require("../helpers/user-helper");
 
 exports.createUser = (req, resp) => {
-  const { email, password, role } = req.body;
+  const { email, password, role, creatorId } = req.body;
   const rolesArray = [roles.CED_HEAD, roles.LABORATORY_HEAD, roles.RESEARCHER];
   if (!rolesArray.includes(req.body.role)) {
     console.log("error occured");
@@ -22,18 +22,18 @@ exports.createUser = (req, resp) => {
       password,
       role,
       generatedPassword: password,
+      creatorId,
     })
       .then((user) => {
-        return mailSender.sendEmail(user)
+        return mailSender.sendEmail(user);
       })
-      .then((user)=>{
+      .then((user) => {
         resp.send(user);
       })
       .catch((error) => {
         console.log(error);
         resp.status(500).send(error);
       });
-
   }
 };
 
@@ -69,13 +69,15 @@ exports.findUser = (req, resp) => {
         )
       );
 
-      const correspondingFollowedUser = await FollowedUser.findOne({user_id: user._id});
+      const correspondingFollowedUser = await FollowedUser.findOne({
+        user_id: user._id,
+      });
 
       resp.send({
         ...user._doc,
         laboratoriesHeaded,
         teamsMemberships,
-        correspondingFollowedUser
+        correspondingFollowedUser,
       });
     })
     .catch((error) => {
@@ -147,7 +149,7 @@ exports.isFollowing = (req, resp) => {
 exports.getFollowedUsers = async (req, resp) => {
   const laboratoryAbbreviation = req.param("laboratory_abbreviation");
   const teamAbbreviation = req.param("team_abbreviation");
-  
+
   const followedUsers = await FollowedUser.find();
   const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
@@ -203,7 +205,7 @@ exports.getFollowedUsers = async (req, resp) => {
 
     resp.send(followedUsers);
   }
-}
+};
 
 exports.updatePassword = async (req, resp) => {
   const hash = await bcrypt.hash(req.body.password, 10);
