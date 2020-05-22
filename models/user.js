@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -34,6 +35,11 @@ const UserSchema = new Schema({
   },
   profilePicture: {
     type: String,
+    required: false,
+  },
+  creatorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: false,
   },
 });
