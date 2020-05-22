@@ -1,58 +1,106 @@
+const User = require("../models/user");
 const FollowedUser = require("../models/followed-user");
-const University = require("../models/university");
-const School = require("../models/school");
+const TeamMemberShip = require("../models/team-membership");
 const Laboratory = require("../models/laboratory");
+const Team = require("../models/team");
 
-exports.getStatistics = function (req, resp) {
+const getFollowedUsers = async (query) => {
+  const { laboratoryAbbreviation, teamAbbreviation } = query;
 
-  let years = [];
-  let statistic = null;
-  for (let i = req.query.start; i <= req.query.end; i++) years.push(i);
+  const followedUsers = await FollowedUser.find();
+  const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
-  FollowedUser.find({}, "name id publications")
-    .then((followedUsers) => {
-      followedUsers.forEach((user) => {
-        let publicationsStatistics = {};
-        years.forEach((year) => {
-          let numberOfPublication = 0;
-          user.publications.forEach((publication) => {
-            if (publication.bib.year == year) numberOfPublication++;
-          });
+  if (!laboratoryAbbreviation && !teamAbbreviation)
+    return await FollowedUser.find();
 
-          publicationsStatistics[year] = numberOfPublication;
-        });
-        user._doc.publicationStatistics = publicationsStatistics;
-        delete user._doc.publications;
-      });
-     resp.send(followedUsers);
-    })
-    .catch((error) => {
-      resp.status(500).send(error);
-      console.log(error);
+  if (laboratoryAbbreviation) {
+    const laboratory = await Laboratory.findOne({
+      abbreviation: laboratoryAbbreviation,
     });
 
-    return statistic;
-    
-}
+    const teams = await Team.find({
+      laboratory_id: laboratory._id,
+    });
 
+    const teamsMemberShips = await Promise.all(
+      teams.map((team) =>
+        TeamMemberShip.find({
+          team_id: team._id,
+          active: true,
+          user_id: { $in: followedUsersIds },
+        })
+      )
+    );
 
-exports.getAllStatistics = async function(req, resp){
+    const followedUsers = await Promise.all(
+      teamsMemberShips
+        .flatMap((t) => t)
+        .map(({ user_id }) => FollowedUser.findOne({ user_id }))
+    );
 
-  try{
-    let stats = await Promise.all([getNumberOfLabsPerSchool(), 
-      getNumberOfPublicationsPerUser(req.query.start, req.query.end), 
-      getNumberOfLabsPerUniv()]);
-    console.log(stats);
-    resp.send({numberOfLabsPerSchool: stats[0], numberOfLabsPerUniv: stats[2], numberOfPublicationsPerUser: stats[1]});
+    return followedUsers;
   }
-  catch(error){
-  resp.status(500).send(error);
+
+  if (teamAbbreviation) {
+    const team = await Team.findOne({
+      abbreviation: teamAbbreviation,
+    });
+
+    const teamsMemberShips = await TeamMemberShip.find({
+      team_id: team._id,
+      active: true,
+      user_id: { $in: followedUsersIds },
+    });
+
+    const followedUsers = await Promise.all(
+      teamsMemberShips.map(({ user_id }) => FollowedUser.findOne({ user_id }))
+    );
+
+    return followedUsers;
   }
- 
-}
+};
 
+exports.getStatistics = async (req, resp) => {
+  const laboratoryAbbreviation = req.param("laboratory_abbreviation");
+  const teamAbbreviation = req.param("team_abbreviation");
 
-async function getNumberOfPublicationsPerUser(start, end){
+  const followedUsers = await getFollowedUsers({
+    laboratoryAbbreviation,
+    teamAbbreviation,
+  });
+
+  const followedUsersStatistics = followedUsers.map(
+    ({ name, publications, profilePicture, ...user }) => {
+      const yearlyPublications = publications
+        .map((publication) => publication.year)
+        .reduce((r, c) => ((r[c] = (r[c] || 0) + 1), r), {});
+
+      return { name, profilePicture, yearlyPublications };
+    }
+  );
+
+  resp.send(followedUsersStatistics);
+};
+
+exports.getAllStatistics = async function (req, resp) {
+  try {
+    let stats = await Promise.all([
+      getNumberOfLabsPerSchool(),
+      getNumberOfPublicationsPerUser(req.query.start, req.query.end),
+      getNumberOfLabsPerUniv(),
+    ]);
+
+    resp.send({
+      numberOfLabsPerSchool: stats[0],
+      numberOfLabsPerUniv: stats[2],
+      numberOfPublicationsPerUser: stats[1],
+    });
+  } catch (error) {
+    resp.status(500).send(error);
+  }
+};
+
+async function getNumberOfPublicationsPerUser(start, end) {
   let years = [];
   let statistic = null;
   for (let i = start; i <= end; i++) years.push(i);
@@ -64,7 +112,7 @@ async function getNumberOfPublicationsPerUser(start, end){
         years.forEach((year) => {
           let numberOfPublication = 0;
           user.publications.forEach((publication) => {
-            if (publication.bib.year == year) numberOfPublication++;
+            if (publication.year == year) numberOfPublication++;
           });
 
           publicationsStatistics[year] = numberOfPublication;
@@ -72,80 +120,76 @@ async function getNumberOfPublicationsPerUser(start, end){
         user._doc.publicationStatistics = publicationsStatistics;
         delete user._doc.publications;
       });
-     statistic = followedUsers;
+      statistic = followedUsers;
     })
     .catch((error) => {
       throw error;
       console.log(error);
     });
 
-    return statistic;
+  return statistic;
 }
 
-
-
- async function getNumberOfLabsPerUniv(){
-  
+async function getNumberOfLabsPerUniv() {
   let statistic = null;
   await University.find()
-      .then((universities) =>
-        Promise.all(
-          universities.map(async (university) => {
-            let numberOfLabs = 0;
-            const schools = await School.find({
-              university_id: university._id,
-            }).then((schools) =>
-              Promise.all(
-                schools.map( async (school)=>{
-                  numberOfLabs += await Laboratory.countDocuments({school_id: school.id});
-                })
-              )
-            );
+    .then((universities) =>
+      Promise.all(
+        universities.map(async (university) => {
+          let numberOfLabs = 0;
+          const schools = await School.find({
+            university_id: university._id,
+          }).then((schools) =>
+            Promise.all(
+              schools.map(async (school) => {
+                numberOfLabs += await Laboratory.countDocuments({
+                  school_id: school.id,
+                });
+              })
+            )
+          );
 
-            return {
-              ...university._doc,
-              numberOfLabs: numberOfLabs
-            };
-          })
-        )
+          return {
+            ...university._doc,
+            numberOfLabs: numberOfLabs,
+          };
+        })
       )
-      .then(stat=>{
-        statistic = stat;
-      })
-      .catch(error=>{
-       throw error;
-       console.log(error);
-      })
+    )
+    .then((stat) => {
+      statistic = stat;
+    })
+    .catch((error) => {
+      throw error;
+      console.log(error);
+    });
 
-      return statistic;
+  return statistic;
 }
 
-async function getNumberOfLabsPerSchool(){
+async function getNumberOfLabsPerSchool() {
   let statistic = null;
   await School.find()
-      .then((schools) =>
-        Promise.all(
-          schools.map(async (school) => {
-            let numberOfLabs = 0;
-             numberOfLabs += await Laboratory.countDocuments({
-              school_id: school._id,
-            })
-            return {
-              ...school._doc,
-              numberOfLabs: numberOfLabs
-            };
-          })
-        )
+    .then((schools) =>
+      Promise.all(
+        schools.map(async (school) => {
+          let numberOfLabs = 0;
+          numberOfLabs += await Laboratory.countDocuments({
+            school_id: school._id,
+          });
+          return {
+            ...school._doc,
+            numberOfLabs: numberOfLabs,
+          };
+        })
       )
-      .then(stat=>{
-        statistic = stat;
-      })
-      .catch(error=>{
-        throw error;
-        console.log(error);
-      })
+    )
+    .then((stat) => {
+      statistic = stat;
+    })
+    .catch((error) => {
+      throw error;
+    });
 
-      return statistic;
+  return statistic;
 }
-
-
