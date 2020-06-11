@@ -58,6 +58,10 @@ exports.findUser = (req, resp) => {
         head_id: user._id,
       });
 
+      const teamsHeaded = await Team.find({
+        head_id: user._id,
+      });
+
       const teamsMemberships = await TeamMemberShip.find({
         user_id: user._id,
         active: true,
@@ -76,6 +80,7 @@ exports.findUser = (req, resp) => {
       resp.send({
         ...user._doc,
         laboratoriesHeaded,
+        teamsHeaded,
         teamsMemberships,
         correspondingFollowedUser,
       });
