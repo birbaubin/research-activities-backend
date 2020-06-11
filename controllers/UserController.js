@@ -271,7 +271,13 @@ exports.updateProfilePicture = async (req, resp) => {
 };
 
 exports.getFilteringOptions = async (req, resp) => {
-  const teams = await Team.find();
+  const laboratoryHeadId = req.params.laboratoryHeadId;
+  const laboratory = await Laboratory.findOne({
+    head_id: laboratoryHeadId,
+  });
+  const teams = await Team.find({
+    laboratory_id: laboratory._id,
+  });
   const followedUsers = await FollowedUser.find();
   const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
@@ -289,7 +295,7 @@ exports.getFilteringOptions = async (req, resp) => {
     };
   });
 
-  const laboratories = await Laboratory.find();
+  /*   const laboratories = await Laboratory.find();
 
   const laboratoriesOptionsPromises = laboratories.map(async (laboratory) => {
     const teams = await Team.find({
@@ -313,8 +319,10 @@ exports.getFilteringOptions = async (req, resp) => {
     };
   });
 
-  const teamsOptions = await Promise.all(teamsOptionsPromises);
   const laboratoriesOptions = await Promise.all(laboratoriesOptionsPromises);
 
-  resp.send([...teamsOptions, ...laboratoriesOptions]);
+ */
+  const teamsOptions = await Promise.all(teamsOptionsPromises);
+
+  resp.send([...teamsOptions]);
 };
