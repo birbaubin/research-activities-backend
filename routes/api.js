@@ -22,7 +22,6 @@ router.put("/users", UserController.updateUser);
 
 router.get(
   "/users/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
   UserController.findUser
 );
 
