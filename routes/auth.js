@@ -36,6 +36,10 @@ router.post("/login", async (req, res, next) => {
           head_id: user._id,
         });
 
+        const teamsHeaded = await Team.find({
+          head_id: user._id,
+        });
+
         const teamsMemberships = await TeamMemberShip.find({
           user_id: user._id,
           active: true,
@@ -51,6 +55,7 @@ router.post("/login", async (req, res, next) => {
           ...user._doc,
           token,
           laboratoriesHeaded,
+          teamsHeaded,
           teamsMemberships,
         });
       });
