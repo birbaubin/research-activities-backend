@@ -56,7 +56,10 @@ router.get("/is-following/:name", UserController.isFollowing);
 
 router.get("/followed-users", UserController.getFollowedUsers);
 
-router.get("/filtering-options", UserController.getFilteringOptions);
+router.get(
+  "/filtering-options/:laboratoryHeadId",
+  UserController.getFilteringOptions
+);
 
 /************* Universities endpoints ***********/
 
@@ -218,6 +221,15 @@ router.get(
   authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
   TeamController.removeFromTeam
 );
+
+
+router.get(
+  "/team-head-association/:team_id/:head_id",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  TeamController.associateHeadToTeam
+);
+
+
 
 router.get("/statistics", statisticsHelper.getStatistics);
 
