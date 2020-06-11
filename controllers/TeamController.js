@@ -113,3 +113,15 @@ exports.removeFromTeam = function (req, resp) {
       resp.status(500).send(error);
     });
 };
+
+exports.associateHeadToTeam = (req, resp) => {
+  Team.findById(req.params.team_id)
+    .then((result) => {
+      result.head_id = req.params.head_id;
+      result.save();
+      resp.send(result);
+    })
+    .catch((error) => {
+      resp.status(500).send(error);
+    });
+};
