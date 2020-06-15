@@ -112,18 +112,25 @@ exports.deleteUser = (req, resp) => {
     });
 };
 
-exports.isFollowing = (req, resp) => {
-  FollowedUser.findOne({ name: req.body.name }).then((result) => {
-    console.log(result);
-  });
-};
-
 exports.followUser = (req, resp) => {
   //console.log(req.body);
   FollowedUser.create(req.body)
     .then((result) => {
-      console.log(result);
       resp.send({ status: "User followed" });
+    })
+    .catch((error) => {
+      resp.status(500).send(error);
+    });
+};
+exports.updateFollowedUser = (req, resp) => {
+  console.log("updateFollowedUser");
+  
+  FollowedUser.findOneAndUpdate(
+    { scholarId: req.body.scholarId },
+    { $set: { ...req.body } }
+  )
+    .then((result) => {
+      resp.send({ status: "User Updated" });
     })
     .catch((error) => {
       resp.status(500).send(error);
@@ -131,7 +138,7 @@ exports.followUser = (req, resp) => {
 };
 
 exports.unfollowUser = (req, resp) => {
-  FollowedUser.findByIdAndDelete(req.params._id)
+  FollowedUser.findOneAndDelete({ scholarId: req.params.scholarId })
     .then((result) => {
       resp.send({ status: "User unfollowed" });
     })
@@ -141,14 +148,13 @@ exports.unfollowUser = (req, resp) => {
 };
 
 exports.isFollowing = (req, resp) => {
-  FollowedUser.findOne({ name: req.params.name })
-    .then((foundUser) => {
-      console.log(foundUser._doc);
-      resp.send({ isFollowing: true, user: foundUser });
-    })
-    .catch((error) => {
-      resp.send({ isFollowing: false });
+  console.log(req.params.scholarId);
+  FollowedUser.find({ scholarId: req.params.scholarId }).then((users) => {
+    resp.send({
+      isFollowing: users.length > 0,
+      oldNumberOfPublications: users[0].publications.length,
     });
+  });
 };
 
 exports.getFollowedUsers = async (req, resp) => {
@@ -201,7 +207,6 @@ exports.getFollowedUsers = async (req, resp) => {
       user_id: { $in: followedUsersIds },
     });
 
-    console.log("teamsMemberShips");
     console.log(teamsMemberShips);
 
     const followedUsers = await Promise.all(
@@ -216,7 +221,6 @@ exports.updatePassword = async (req, resp) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   User.updateOne({ _id: req.params._id }, { $set: { password: hash } })
     .then((result) => {
-      console.log(result);
       resp.send(result);
     })
     .catch((error) => {
