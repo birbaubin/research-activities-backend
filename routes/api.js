@@ -49,11 +49,13 @@ router.get("/researchers", UserController.getResearchers);
 
 router.post("/follow", UserController.followUser);
 
-router.get("/unfollow/:_id", UserController.unfollowUser);
+router.get("/unfollow/:scholarId", UserController.unfollowUser);
 
-router.get("/is-following/:name", UserController.isFollowing);
+router.get("/is-following/:scholarId", UserController.isFollowing);
 
 router.get("/followed-users", UserController.getFollowedUsers);
+
+router.post("/update-followed-user", UserController.updateFollowedUser);
 
 router.get(
   "/filtering-options/:laboratoryHeadId",
