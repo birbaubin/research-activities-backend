@@ -9,7 +9,7 @@ const PublicationSchema = new Schema({
     type: Array,
   },
   citation: {
-    type: Number,
+    type: String,
   },
   year: {
     type: String,
