@@ -51,43 +51,39 @@ exports.updateUser = async (req, resp) => {
     });
 };
 
-exports.findUser = (req, resp) => {
-  User.findById(req.params._id)
-    .then(async (user) => {
-      const laboratoriesHeaded = await Laboratory.find({
-        head_id: user._id,
-      });
+exports.findUser = async (req, resp) => {
+  const user = await User.findOne({ _id: req.params._id });
 
-      const teamsHeaded = await Team.find({
-        head_id: user._id,
-      });
+  const laboratoriesHeaded = await Laboratory.find({
+    head_id: user._id,
+  });
 
-      const teamsMemberships = await TeamMemberShip.find({
-        user_id: user._id,
-        active: true,
-      }).then((teamsMemberships) =>
-        Promise.all(
-          teamsMemberships.map((teamsMembership) =>
-            Team.findOne({ _id: teamsMembership.team_id })
-          )
-        )
-      );
+  const teamsHeaded = await Team.find({
+    head_id: user._id,
+  });
 
-      const correspondingFollowedUser = await FollowedUser.findOne({
-        user_id: user._id,
-      });
+  const teamsMemberships = await TeamMemberShip.find({
+    user_id: user._id,
+    active: true,
+  }).then((teamsMemberships) =>
+    Promise.all(
+      teamsMemberships.map((teamsMembership) =>
+        Team.findOne({ _id: teamsMembership.team_id })
+      )
+    )
+  );
 
-      resp.send({
-        ...user._doc,
-        laboratoriesHeaded,
-        teamsHeaded,
-        teamsMemberships,
-        correspondingFollowedUser,
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  const correspondingFollowedUser = await FollowedUser.findOne({
+    user_id: user._id,
+  });
+
+  resp.send({
+    ...user._doc,
+    laboratoriesHeaded,
+    teamsHeaded,
+    teamsMemberships,
+    correspondingFollowedUser,
+  });
 };
 
 exports.findAllUsers = (req, resp) => {
@@ -113,18 +109,23 @@ exports.deleteUser = (req, resp) => {
 };
 
 exports.followUser = (req, resp) => {
-  //console.log(req.body);
+  console.log("follow");
+  
   FollowedUser.create(req.body)
     .then((result) => {
+      console.log(result);
+      
       resp.send({ status: "User followed" });
     })
     .catch((error) => {
+      console.log(error);
+      
       resp.status(500).send(error);
     });
 };
 exports.updateFollowedUser = (req, resp) => {
   console.log("updateFollowedUser");
-  
+
   FollowedUser.findOneAndUpdate(
     { scholarId: req.body.scholarId },
     { $set: { ...req.body } }
@@ -150,10 +151,17 @@ exports.unfollowUser = (req, resp) => {
 exports.isFollowing = (req, resp) => {
   console.log(req.params.scholarId);
   FollowedUser.find({ scholarId: req.params.scholarId }).then((users) => {
-    resp.send({
-      isFollowing: users.length > 0,
-      oldNumberOfPublications: users[0].publications.length,
-    });
+    console.log();
+    
+    if (users.length==0)
+      resp.send({
+        isFollowing: false,
+      });
+    else
+      resp.send({
+        isFollowing: true,
+        oldNumberOfPublications: users[0].publications.length,
+      });
   });
 };
 
