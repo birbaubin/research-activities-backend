@@ -14,6 +14,15 @@ const PublicationSchema = new Schema({
   year: {
     type: String,
   },
+  searchedFor: {
+    type: String,
+  },
+  IF: {
+    type: String,
+  },
+  SJR: {
+    type: String,
+  },
 });
 
 const Publication = mongoose.model("publication", PublicationSchema);
