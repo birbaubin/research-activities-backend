@@ -1,8 +1,8 @@
 module.exports = [
   {
-    firstName: "Admin",
-    lastName: "Admin",
-    email: "admin@gmail.com",
+    firstName: "Abdelhamid",
+    lastName: "NYASSI",
+    email: "abdelhamid.nyassi@gmail.com",
     password: "admin",
     role: "CED_HEAD",
   },
