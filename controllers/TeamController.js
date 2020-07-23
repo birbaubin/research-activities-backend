@@ -118,6 +118,27 @@ exports.associateHeadToTeam = (req, resp) => {
   Team.findById(req.params.team_id)
     .then((result) => {
       result.head_id = req.params.head_id;
+
+      const date = new Date();
+      const today = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`; 
+
+      result.head_history.forEach(element => {
+        if(element.active){
+          element.active = false;
+          element.end = today;
+        }
+      });
+
+      
+      let head_history_item = {
+        head_id: req.params.head_id,
+        start: today,
+        end: null,
+        active: true
+      };
+
+      result.head_history.push(head_history_item);
+
       result.save();
       resp.send(result);
     })

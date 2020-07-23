@@ -20,6 +20,14 @@ const TeamSchema = new Schema({
     ref: "Laboratory",
     required: [true],
   },
+  head_history : [
+    {
+      head_id: mongoose.Schema.Types.ObjectId,
+      start: String,
+      end: String,
+      active: Boolean
+    }
+  ]
 });
 
 const Team = mongoose.model("team", TeamSchema);
