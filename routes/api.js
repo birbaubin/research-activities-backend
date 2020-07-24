@@ -195,31 +195,31 @@ router.put(
 
 router.get(
   "/teams",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
   TeamController.findAllTeams
 );
 
 router.get(
   "/teams/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
   TeamController.findTeam
 );
 
 router.delete(
   "/teams/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
   TeamController.deleteTeam
 );
 
 router.get(
   "/add-to-team/:team_id/:user_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
   TeamController.addUserToTeam
 );
 
 router.get(
   "/remove-from-team/:team_id/:user_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
   TeamController.removeFromTeam
 );
 
