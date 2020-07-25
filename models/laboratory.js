@@ -10,9 +10,9 @@ const LaboratorySchema = new Schema({
     type: String,
     required: [true],
   },
-  school_id: {
+  establishment_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "School",
+    ref: "Establishment",
     required: [true],
   },
   head_id: {

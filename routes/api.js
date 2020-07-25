@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const UniversityController = require("../controllers/UniversityController");
-const SchoolController = require("../controllers/SchoolController");
+const EstablishmentController = require("../controllers/EstablishmentController");
 const LaboratoryController = require("../controllers/LaboratoryController");
 const UserController = require("../controllers/UserController");
 const TeamController = require("../controllers/TeamController");
@@ -95,46 +95,46 @@ router.delete(
 );
 
 router.get(
-  "/universities/:_id/schools",
-  UniversityController.getUniversitySchools
+  "/universities/:_id/establishments",
+  UniversityController.getUniversityEstablishments
 );
 
-/************* Schools endpoints ***********/
+/************* Establishments endpoints ***********/
 
 router.post(
-  "/schools",
+  "/establishments",
   authorize([role.CED_HEAD]),
-  SchoolController.createSchool
+  EstablishmentController.createEstablishment
 );
 
 router.put(
-  "/schools",
+  "/establishments",
   authorize([role.CED_HEAD]),
-  SchoolController.updateSchool
+  EstablishmentController.updateEstablishment
 );
 
 router.get(
-  "/schools/:_id",
+  "/establishments/:_id",
   authorize([role.CED_HEAD]),
-  SchoolController.findSchool
+  EstablishmentController.findEstablishment
 );
 
 router.get(
-  "/schools",
+  "/establishments",
   authorize([role.CED_HEAD]),
-  SchoolController.findAllSchools
+  EstablishmentController.findAllEstablishments
 );
 
 router.delete(
-  "/schools/:_id",
+  "/establishments/:_id",
   authorize([role.CED_HEAD]),
-  SchoolController.deleteSchool
+  EstablishmentController.deleteEstablishment
 );
 
 router.get(
-  "/schools/:_id/laboratories",
+  "/establishments/:_id/laboratories",
   authorize([role.CED_HEAD]),
-  SchoolController.getSchoolLaboratories
+  EstablishmentController.getEstablishmentLaboratories
 );
 
 /************* Laboratories endpoints ***********/

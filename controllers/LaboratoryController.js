@@ -1,5 +1,5 @@
 const Laboratory = require("../models/laboratory");
-const School = require("../models/school");
+const Establishment = require("../models/establishment");
 const userHelper = require("../helpers/user-helper");
 const Team = require("../models/team");
 
@@ -30,7 +30,7 @@ exports.findLaboratory = (req, resp) => {
   Laboratory.findById(req.params._id)
     .then(async (laboratory) => ({
       ...laboratory._doc,
-      school: await School.findById(laboratory.school_id),
+      establishment: await Establishment.findById(laboratory.establishment_id),
       teams: await Team.find({ laboratory_id: laboratory._id }),
     }))
     .then((laboratory) => {
@@ -47,7 +47,7 @@ exports.findAllLaboratories = (req, resp) => {
       Promise.all(
         laboratories.map(async (laboratory) => ({
           ...laboratory._doc,
-          school: await School.findById(laboratory.school_id),
+          establishment: await Establishment.findById(laboratory.establishment_id),
           teams: await Team.find({ laboratory_id: laboratory._id }),
         }))
       )

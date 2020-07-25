@@ -14,7 +14,7 @@ mongoose
 
 const User = require("../models/user");
 const University = require("../models/university");
-const School = require("../models/school");
+const Establishment = require("../models/establishment");
 const Laboratory = require("../models/laboratory");
 const Team = require("../models/team");
 const FollowedUser = require("../models/followed-user");
@@ -22,7 +22,7 @@ const TeamMembership = require("../models/team-membership");
 
 const users = require("./data/users");
 const universities = require("./data/universities");
-const schools = require("./data/schools");
+const establishments = require("./data/establishments");
 const laboratories = require("./data/laboratories");
 const teams = require("./data/teams");
 
@@ -30,7 +30,7 @@ const clearData = () =>
   Promise.all([
     User.deleteMany(),
     University.deleteMany(),
-    School.deleteMany(),
+    Establishment.deleteMany(),
     Laboratory.deleteMany(),
     Team.deleteMany(),
     FollowedUser.deleteMany(),
@@ -91,12 +91,12 @@ const confirmeUsers = () =>
 const seedUniversities = () =>
   Promise.all(universities.map((university) => University.create(university)));
 
-const seedSchools = () => {
+const seedEstablishments = () => {
   Promise.all(
-    schools.map(async (school) => {
-      const university = await University.findOne(school.university);
+    establishments.map(async (establishment) => {
+      const university = await University.findOne(establishment.university);
 
-      return School.create({ ...school, university_id: university._id });
+      return Establishment.create({ ...establishment, university_id: university._id });
     })
   );
 };
@@ -105,11 +105,11 @@ const seedLaboratories = () => {
   Promise.all(
     laboratories.map(async (laboratory) => {
       const head = await User.findOne(laboratory.head);
-      const school = await School.findOne(laboratory.school);
+      const establishment = await Establishment.findOne(laboratory.establishment);
 
       return Laboratory.create({
         ...laboratory,
-        school_id: school._id,
+        establishment_id: establishment._id,
         head_id: head._id,
       });
     })
@@ -140,7 +140,7 @@ clearData()
   .then(() => timeDelay())
   .then(() => seedUniversities())
   .then(() => timeDelay())
-  .then(() => seedSchools())
+  .then(() => seedEstablishments())
   .then(() => timeDelay())
   .then(() => seedLaboratories())
   .then(() => timeDelay())

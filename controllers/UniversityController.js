@@ -1,5 +1,5 @@
 const University = require("../models/university");
-const School = require("../models/school");
+const Establishment = require("../models/establishment");
 
 exports.createUniversity = (req, resp) => {
   console.log(req.body);
@@ -58,8 +58,8 @@ exports.deleteUniversity = (req, resp) => {
     });
 };
 
-exports.getUniversitySchools = (req, resp) => {
-  School.find({ university_id: req.params._id })
+exports.getUniversityEstablishments = (req, resp) => {
+  Establishment.find({ university_id: req.params._id })
     .then((universities) => {
       resp.send(universities);
     })

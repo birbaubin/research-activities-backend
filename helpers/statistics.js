@@ -85,13 +85,13 @@ exports.getStatistics = async (req, resp) => {
 exports.getAllStatistics = async function (req, resp) {
   try {
     let stats = await Promise.all([
-      getNumberOfLabsPerSchool(),
+      getNumberOfLabsPerEstablishment(),
       getNumberOfPublicationsPerUser(req.query.start, req.query.end),
       getNumberOfLabsPerUniv(),
     ]);
 
     resp.send({
-      numberOfLabsPerSchool: stats[0],
+      numberOfLabsPerEstablishment: stats[0],
       numberOfLabsPerUniv: stats[2],
       numberOfPublicationsPerUser: stats[1],
     });
@@ -137,13 +137,13 @@ async function getNumberOfLabsPerUniv() {
       Promise.all(
         universities.map(async (university) => {
           let numberOfLabs = 0;
-          const schools = await School.find({
+          const establishments = await Establishment.find({
             university_id: university._id,
-          }).then((schools) =>
+          }).then((establishments) =>
             Promise.all(
-              schools.map(async (school) => {
+              establishments.map(async (establishment) => {
                 numberOfLabs += await Laboratory.countDocuments({
-                  school_id: school.id,
+                  establishment_id: establishment.id,
                 });
               })
             )
@@ -167,18 +167,18 @@ async function getNumberOfLabsPerUniv() {
   return statistic;
 }
 
-async function getNumberOfLabsPerSchool() {
+async function getNumberOfLabsPerEstablishment() {
   let statistic = null;
-  await School.find()
-    .then((schools) =>
+  await Establishment.find()
+    .then((establishments) =>
       Promise.all(
-        schools.map(async (school) => {
+        establishments.map(async (establishment) => {
           let numberOfLabs = 0;
           numberOfLabs += await Laboratory.countDocuments({
-            school_id: school._id,
+            establishment_id: establishment._id,
           });
           return {
-            ...school._doc,
+            ...establishment._doc,
             numberOfLabs: numberOfLabs,
           };
         })
