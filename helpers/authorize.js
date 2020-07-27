@@ -1,27 +1,25 @@
-const expressJwt = require('express-jwt')
-const config = require('../config');
-
-
+const expressJwt = require("express-jwt");
+const config = require("../config");
 
 function authorize(roles = []) {
+  if (typeof roles === "string") {
+    roles = [roles];
+  }
 
-    if (typeof roles === 'string') {
-        roles = [roles];
-    }
+  return [
+    expressJwt({
+      secret: config.JWT_SECRET,
+      algorithms: ["HS256"],
+    }),
+    (req, res, next) => {
+      if (roles.length && !roles.includes(req.user.user.role)) {
+        console.log(roles);
+        return res.status(401).json({ message: "Unauthorized" });
+      }
 
-    
-    return [
-        expressJwt({secret: config.JWT_SECRET}),
-
-        (req, res, next) => {
-            if (roles.length && !roles.includes(req.user.user.role)) {
-                console.log(roles)
-                return res.status(401).json({ message: 'Unauthorized' });
-            }
-
-            next();
-        }
-    ];
+      next();
+    },
+  ];
 }
 
 module.exports = authorize;
