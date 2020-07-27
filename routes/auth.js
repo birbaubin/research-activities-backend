@@ -43,11 +43,11 @@ router.post("/login", async (req, res, next) => {
         const teamsMemberships = await TeamMemberShip.find({
           user_id: user._id,
           active: true,
-        }).then((teamsMemberships) =>
-          Promise.all(
-            teamsMemberships.map((teamsMembership) =>
-              Team.findOne({ _id: teamsMembership.team_id })
-            )
+        });
+
+        await Promise.all(
+          teamsMemberships.map((teamsMembership) =>
+            Team.findOne({ _id: teamsMembership.team_id })
           )
         );
 
