@@ -20,14 +20,14 @@ const LaboratorySchema = new Schema({
     ref: "User",
     required: false,
   },
-  head_history : [
+  head_history: [
     {
-      head_id: mongoose.Schema.Types.ObjectId,
+      head: Object,
       start: String,
       end: String,
-      active: Boolean
-    }
-  ]
+      active: Boolean,
+    },
+  ],
 });
 
 const Laboratory = mongoose.model("laboratory", LaboratorySchema);

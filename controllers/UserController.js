@@ -10,45 +10,41 @@ const mailSender = require("../helpers/mail-sender");
 const roles = require("../helpers/role");
 const userHelper = require("../helpers/user-helper");
 
-exports.createUser = (req, resp) => {
+exports.createUser = async (req, resp) => {
   const { email, password, role, creatorId } = req.body;
   const rolesArray = [roles.CED_HEAD, roles.LABORATORY_HEAD, roles.RESEARCHER];
   if (!rolesArray.includes(req.body.role)) {
     console.log("error occured");
     resp.status(400).send({ error: "Incorrect role value" });
   } else {
-    User.create({
-      email,
-      password,
-      role,
-      generatedPassword: password,
-      creatorId,
-    })
-      .then((user) => {
-        return mailSender.sendEmail(user);
-      })
-      .then((user) => {
-        resp.send(user);
-      })
-      .catch((error) => {
-        console.log(error);
-        resp.status(500).send(error);
+    try {
+      const user = await User.create({
+        email,
+        password,
+        role,
+        generatedPassword: password,
+        creatorId,
       });
+      const result = await mailSender.sendEmail(user);
+      resp.status(200).send(result);
+    } catch (error) {
+      console.log(error);
+      resp.status(500).send(error);
+    }
   }
 };
 
 exports.updateUser = async (req, resp) => {
-  User.updateOne(
-    { _id: req.body._id },
-    { $set: req.body, hasConfirmed: true, generatedPassword: "" }
-  )
-    .then((result) => {
-      resp.send(result);
-    })
-    .catch((error) => {
-      console.log(error);
-      resp.send(error);
-    });
+  try {
+    const result = await User.updateOne(
+      { _id: req.body._id },
+      { $set: req.body, hasConfirmed: true, generatedPassword: "" }
+    );
+    resp.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send(error);
+  }
 };
 
 exports.findUser = async (req, resp) => {
@@ -65,11 +61,11 @@ exports.findUser = async (req, resp) => {
   const teamsMemberships = await TeamMemberShip.find({
     user_id: user._id,
     active: true,
-  }).then((teamsMemberships) =>
-    Promise.all(
-      teamsMemberships.map((teamsMembership) =>
-        Team.findOne({ _id: teamsMembership.team_id })
-      )
+  });
+
+  await Promise.all(
+    teamsMemberships.map((teamsMembership) =>
+      Team.findOne({ _id: teamsMembership.team_id })
     )
   );
 
@@ -77,7 +73,7 @@ exports.findUser = async (req, resp) => {
     user_id: user._id,
   });
 
-  resp.send({
+  resp.status(200).send({
     ...user._doc,
     laboratoriesHeaded,
     teamsHeaded,
@@ -86,83 +82,78 @@ exports.findUser = async (req, resp) => {
   });
 };
 
-exports.findAllUsers = (req, resp) => {
-  User.find()
-    .then((users) => {
-      resp.send(users);
-    })
-    .catch((error) => {
-      console.log(error);
-      resp.send(error);
-    });
+exports.findAllUsers = async (req, resp) => {
+  try {
+    const users = await User.find();
+    resp.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send(error);
+  }
 };
 
-exports.deleteUser = (req, resp) => {
-  User.deleteOne({ _id: req.params._id })
-    .then((result) => {
-      resp.send(result);
-    })
-    .catch((error) => {
-      console.log(error);
-      resp.send(error);
-    });
+exports.deleteUser = async (req, resp) => {
+  try {
+    const result = await User.deleteOne({ _id: req.params._id });
+    resp.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send(error);
+  }
 };
 
-exports.followUser = (req, resp) => {
+exports.followUser = async (req, resp) => {
   console.log("follow");
-  
-  FollowedUser.create(req.body)
-    .then((result) => {
-      console.log(result);
-      
-      resp.send({ status: "User followed" });
-    })
-    .catch((error) => {
-      console.log(error);
-      
-      resp.status(500).send(error);
-    });
+
+  try {
+    const result = await FollowedUser.create(req.body);
+    console.log(result);
+
+    resp.status(200).send({ status: "User followed" });
+  } catch (error) {
+    console.log(error);
+
+    resp.status(500).send(error);
+  }
 };
-exports.updateFollowedUser = (req, resp) => {
+exports.updateFollowedUser = async (req, resp) => {
   console.log("updateFollowedUser");
 
-  FollowedUser.findOneAndUpdate(
-    { scholarId: req.body.scholarId },
-    { $set: { ...req.body } }
-  )
-    .then((result) => {
-      resp.send({ status: "User Updated" });
-    })
-    .catch((error) => {
-      resp.status(500).send(error);
-    });
+  try {
+    const result = await FollowedUser.findOneAndUpdate(
+      { scholarId: req.body.scholarId },
+      { $set: { ...req.body } }
+    );
+    resp.status(200).send({ status: "User Updated" });
+  } catch (error) {
+    resp.status(500).send(error);
+  }
 };
 
-exports.unfollowUser = (req, resp) => {
-  FollowedUser.findOneAndDelete({ scholarId: req.params.scholarId })
-    .then((result) => {
-      resp.send({ status: "User unfollowed" });
-    })
-    .catch((error) => {
-      resp.status(500).send(error);
+exports.unfollowUser = async (req, resp) => {
+  try {
+    const result = await FollowedUser.findOneAndDelete({
+      scholarId: req.params.scholarId,
     });
+    resp.status(200).send({ status: "User unfollowed" });
+  } catch (error) {
+    resp.status(500).send(error);
+  }
 };
 
-exports.isFollowing = (req, resp) => {
+exports.isFollowing = async (req, resp) => {
   console.log(req.params.scholarId);
-  FollowedUser.find({ scholarId: req.params.scholarId }).then((users) => {
-    console.log();
-    
-    if (users.length==0)
-      resp.send({
-        isFollowing: false,
-      });
-    else
-      resp.send({
-        isFollowing: true,
-        oldNumberOfPublications: users[0].publications.length,
-      });
-  });
+  const users = await FollowedUser.find({ scholarId: req.params.scholarId });
+  console.log();
+  if (users.length == 0)
+    resp.status(200).send({
+      isFollowing: false,
+    });
+  else
+    resp.status(200).send({
+      isFollowing: true,
+      oldNumberOfPublications: users[0].publications.length,
+    });
 };
 
 exports.getFollowedUsers = async (req, resp) => {
@@ -173,7 +164,7 @@ exports.getFollowedUsers = async (req, resp) => {
   const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
   if (!laboratoryAbbreviation && !teamAbbreviation) {
-    resp.send(await FollowedUser.find());
+    resp.status(200).send(await FollowedUser.find());
   }
 
   if (laboratoryAbbreviation) {
@@ -201,7 +192,7 @@ exports.getFollowedUsers = async (req, resp) => {
         .map(({ user_id }) => FollowedUser.findOne({ user_id }))
     );
 
-    resp.send(followedUsers);
+    resp.status(200).send(followedUsers);
   }
 
   if (teamAbbreviation) {
@@ -221,15 +212,15 @@ exports.getFollowedUsers = async (req, resp) => {
       teamsMemberShips.map(({ user_id }) => FollowedUser.findOne({ user_id }))
     );
 
-    resp.send(followedUsers);
+    resp.status(200).send(followedUsers);
   }
 };
 
 exports.updatePassword = async (req, resp) => {
   const hash = await bcrypt.hash(req.body.password, 10);
-  User.updateOne({ _id: req.params._id }, { $set: { password: hash } })
+  return User.updateOne({ _id: req.params._id }, { $set: { password: hash } })
     .then((result) => {
-      resp.send(result);
+      resp.status(200).send(result);
     })
     .catch((error) => {
       console.log(error);
@@ -240,7 +231,7 @@ exports.updatePassword = async (req, resp) => {
 exports.getLaboratoryHeads = async (req, resp) => {
   try {
     const laboratoryHeads = await User.find({ role: roles.LABORATORY_HEAD });
-    resp.send(laboratoryHeads);
+    resp.status(200).send(laboratoryHeads);
   } catch (error) {
     resp.status(500).send(error);
   }
@@ -249,7 +240,7 @@ exports.getLaboratoryHeads = async (req, resp) => {
 exports.getResearchers = async (req, resp) => {
   try {
     const researchers = await User.find({ role: roles.RESEARCHER });
-    resp.send(researchers);
+    resp.status(200).send(researchers);
   } catch (error) {
     resp.status(500).send(error);
   }
@@ -260,8 +251,8 @@ exports.updateProfilePicture = async (req, resp) => {
   let user = userHelper.requesterUser(req);
   let userFromDB = await User.findById(user._id, "profilePicture");
   if (
-    userFromDB.profilePicture != undefined &&
-    userFromDB.profilePicture != "default.png"
+    userFromDB.profilePicture !== undefined &&
+    userFromDB.profilePicture !== "default.png"
   ) {
     fs.unlink(
       __dirname + "/../public/images/" + userFromDB.profilePicture,
@@ -278,7 +269,7 @@ exports.updateProfilePicture = async (req, resp) => {
     else {
       User.updateOne({ _id: user._id }, { $set: { profilePicture: fileUrl } })
         .then((done) => {
-          resp.send({ message: "file uploaded", profilePicture: fileUrl });
+          resp.status(200).send({ message: "file uploaded", profilePicture: fileUrl });
         })
         .catch((error) => {
           resp.status(500).send(error);
@@ -341,5 +332,5 @@ exports.getFilteringOptions = async (req, resp) => {
  */
   const teamsOptions = await Promise.all(teamsOptionsPromises);
 
-  resp.send([...teamsOptions]);
+  resp.status(200).send([...teamsOptions]);
 };

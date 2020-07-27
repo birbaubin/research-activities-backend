@@ -79,7 +79,7 @@ exports.getStatistics = async (req, resp) => {
     }
   );
 
-  resp.send(followedUsersStatistics);
+  resp.status(200).send(followedUsersStatistics);
 };
 
 exports.getAllStatistics = async function (req, resp) {
@@ -90,7 +90,7 @@ exports.getAllStatistics = async function (req, resp) {
       getNumberOfLabsPerUniv(),
     ]);
 
-    resp.send({
+    resp.status(200).send({
       numberOfLabsPerEstablishment: stats[0],
       numberOfLabsPerUniv: stats[2],
       numberOfPublicationsPerUser: stats[1],
@@ -169,27 +169,22 @@ async function getNumberOfLabsPerUniv() {
 
 async function getNumberOfLabsPerEstablishment() {
   let statistic = null;
-  await Establishment.find()
-    .then((establishments) =>
-      Promise.all(
-        establishments.map(async (establishment) => {
-          let numberOfLabs = 0;
-          numberOfLabs += await Laboratory.countDocuments({
-            establishment_id: establishment._id,
-          });
-          return {
-            ...establishment._doc,
-            numberOfLabs: numberOfLabs,
-          };
-        })
-      )
-    )
-    .then((stat) => {
-      statistic = stat;
+  const establishments = await Establishment.find();
+  return  Promise.all(
+    establishments.map(async (establishment) => {
+      let numberOfLabs = 0;
+      numberOfLabs += await Laboratory.countDocuments({
+        establishment_id: establishment._id,
+      });
+      return {
+        ...establishment._doc,
+        numberOfLabs: numberOfLabs,
+      };
     })
-    .catch((error) => {
-      throw error;
-    });
+  )
+  .catch((error) => {
+    throw error;
+  });
 
   return statistic;
 }

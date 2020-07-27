@@ -1,148 +1,175 @@
 const Team = require("../models/team");
 const Laboratory = require("../models/laboratory");
+const University = require("../models/university");
+const Establishment = require("../models/establishment");
 const TeamMemberShip = require("../models/team-membership");
 const User = require("../models/user");
 
-exports.createTeam = function (req, resp) {
-  Team.create(req.body)
-    .then((team) => {
-      resp.send(team);
-    })
-    .catch((error) => {
-      console.log(error);
-      resp.send("error");
-    });
-};
-
-exports.updateTeam = function (req, resp) {
-  Team.updateOne({ _id: req.body._id }, { $set: req.body })
-    .then((result) => {
-      resp.send(result);
-    })
-    .catch((error) => {
-      console.log(error);
-      resp.send(error);
-    });
-};
-
-exports.findTeam = function (req, resp) {
-  Team.findById(req.params._id)
-    .then((team) => {
-      resp.send(team);
-    })
-    .catch((error) => {
-      console.log(error);
-      resp.send("error");
-    });
-};
-
-exports.findAllTeams = function (req, resp) {
-  Team.find()
-    .then((teams) =>
-      Promise.all(
-        teams.map(async (team) => {
-          const members = await TeamMemberShip.find({
-            team_id: team._id,
-            active: true,
-          }).then((teamsMemberships) =>
-            Promise.all(
-              teamsMemberships.map(({ user_id }) =>
-                User.findOne({ _id: user_id })
-              )
-            )
-          );
-
-          return {
-            ...team._doc,
-            laboratory: await Laboratory.findById(team.laboratory_id),
-            members,
-          };
-        })
-      )
-    )
-    .then((laboratories) => {
-      resp.send(laboratories);
-    })
-    .catch((error) => {
-      console.log(error);
-      resp.send(error);
-    });
-};
-
-exports.deleteTeam = function (req, resp) {
-  Team.deleteOne({ _id: req.params._id })
-    .then((result) => {
-      resp.send(result);
-    })
-    .catch((error) => {
-      console.log(error);
-      resp.send(error);
-    });
-};
-
-exports.addUserToTeam = async function (req, resp) {
+exports.createTeam = async (req, resp) => {
   try {
-    TeamMemberShip.create({
-      user_id: req.params.user_id,
-      team_id: req.params.team_id,
-      active: true,
-    })
-      .then((result) => {
-        console.log(result);
-        resp.send(result);
-      })
-      .catch((error) => {
-        resp.status(500).send(error);
-        console.log(error);
-      });
+    const team = await Team.create(req.body);
+    resp.status(200).send(team);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send("error");
+  }
+};
+
+exports.updateTeam = async (req, resp) => {
+  try {
+    const result = await Team.updateOne(
+      { _id: req.body._id },
+      { $set: req.body }
+    );
+    resp.status(200).send(result);
   } catch (error) {
     console.log(error);
     resp.status(500).send(error);
   }
 };
 
-exports.removeFromTeam = function (req, resp) {
-  TeamMemberShip.updateMany(
-    { user_id: req.params.user_id, team_id: req.params.team_id, active: true },
-    { active: false }
-  )
-    .then((result) => {
-      resp.send(result);
-    })
-    .catch((error) => {
-      resp.status(500).send(error);
+exports.findTeam = async (req, resp) => {
+  try {
+    const team = await Team.findById(req.params._id);
+    const laboratory = await Laboratory.findById(team.laboratory_id);
+    const establishment = await Establishment.findById(
+      laboratory.establishment_id
+    );
+    const university = await University.findById(establishment.university_id);
+
+    const teamMemberShips = await TeamMemberShip.find({
+      team_id: team._id,
+      active: true,
     });
+    const teamHead = await User.findOne({ _id: team.head_id });
+
+    const members = await Promise.all(
+      teamMemberShips.map(async (teamMemberShip) => {
+        return await User.findById(teamMemberShip.user_id);
+      })
+    );
+
+    resp.status(200).send({
+      ...team._doc,
+      laboratory,
+      establishment,
+      university,
+      members,
+      teamHead,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send("error");
+  }
 };
 
-exports.associateHeadToTeam = (req, resp) => {
-  Team.findById(req.params.team_id)
-    .then((result) => {
-      result.head_id = req.params.head_id;
+exports.findAllTeams = async (req, resp) => {
+  try {
+    const teams = await Team.find();
+    const result = await Promise.all(
+      teams.map(async (team) => {
+        return {
+          ...team._doc,
+          laboratory: await Laboratory.findById(team.laboratory_id),
+          teamMemberShip: await TeamMemberShip.find({
+            team_id: team._id,
+            active: true,
+          }),
+        };
+      })
+    );
 
-      const date = new Date();
-      const today = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`; 
+    console.log(result);
+    resp.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send(error);
+  }
+};
 
-      result.head_history.forEach(element => {
-        if(element.active){
-          element.active = false;
-          element.end = today;
-        }
-      });
+exports.deleteTeam = async (req, resp) => {
+  try {
+    const result = await Team.deleteOne({ _id: req.params._id });
+    resp.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send(error);
+  }
+};
 
-      
-      let head_history_item = {
-        head_id: req.params.head_id,
-        start: today,
-        end: null,
-        active: true
-      };
-
-      result.head_history.push(head_history_item);
-
-      result.save();
-      resp.send(result);
-    })
-    .catch((error) => {
-      resp.status(500).send(error);
+exports.addUserToTeam = async (req, resp) => {
+  try {
+    const result = await TeamMemberShip.create({
+      user_id: req.params.user_id,
+      team_id: req.params.team_id,
+      active: true,
     });
+    resp.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send(error);
+  }
+};
+
+exports.removeFromTeam = async (req, resp) => {
+  try {
+    const result = await TeamMemberShip.updateMany(
+      {
+        user_id: req.params.user_id,
+        team_id: req.params.team_id,
+        active: true,
+      },
+      { active: false }
+    );
+    resp.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send(error);
+  }
+};
+
+exports.associateHeadToTeam = async (req, resp) => {
+  try {
+    let team = await Team.findById(req.params.team_id);
+
+    await User.updateOne(
+      { _id: team.head_id },
+      { $set: { role: "RESEARCHER", hasConfirmed: true } }
+    );
+
+    const update = await User.updateOne(
+      { _id: req.params.head_id },
+      { $set: { role: "TEAM_HEAD", hasConfirmed: true } }
+    );
+
+    const head = await User.findById(req.params.head_id);
+
+    const date = new Date();
+    const today = `${date.getFullYear()}/${
+      date.getMonth() + 1
+    }/${date.getDate()}`;
+
+    team.head_history.forEach((element) => {
+      if (element.active) {
+        element.active = false;
+        element.end = today;
+      }
+    });
+
+    let head_history_item = {
+      head: head,
+      start: today,
+      end: null,
+      active: true,
+    };
+
+    team.head_history.push(head_history_item);
+    team.head_id = head._id;
+    const result = await team.save();
+
+    resp.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send(error);
+  }
 };
