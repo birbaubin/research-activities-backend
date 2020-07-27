@@ -42,5 +42,5 @@ app.use("/auth", require("./routes/auth"));
 
 app.get("/test", (req, resp) => {
   const token = req.headers.authorization.split(" ")[1];
-  resp.send(jwt.decode(token));
+  resp.status(200).send(jwt.decode(token));
 });
