@@ -14,7 +14,6 @@ exports.createUser = async (req, resp) => {
   const { email, password, role, creatorId } = req.body;
   const rolesArray = [roles.CED_HEAD, roles.LABORATORY_HEAD, roles.RESEARCHER];
   if (!rolesArray.includes(req.body.role)) {
-    console.log("error occured");
     resp.status(400).send({ error: "Incorrect role value" });
   } else {
     try {
@@ -103,11 +102,8 @@ exports.deleteUser = async (req, resp) => {
 };
 
 exports.followUser = async (req, resp) => {
-  console.log("follow");
-
   try {
     const result = await FollowedUser.create(req.body);
-    console.log(result);
 
     resp.status(200).send({ status: "User followed" });
   } catch (error) {
@@ -117,8 +113,6 @@ exports.followUser = async (req, resp) => {
   }
 };
 exports.updateFollowedUser = async (req, resp) => {
-  console.log("updateFollowedUser");
-
   try {
     const result = await FollowedUser.findOneAndUpdate(
       { scholarId: req.body.scholarId },
@@ -142,9 +136,7 @@ exports.unfollowUser = async (req, resp) => {
 };
 
 exports.isFollowing = async (req, resp) => {
-  console.log(req.params.scholarId);
   const users = await FollowedUser.find({ scholarId: req.params.scholarId });
-  console.log();
   if (users.length == 0)
     resp.status(200).send({
       isFollowing: false,
@@ -206,13 +198,22 @@ exports.getFollowedUsers = async (req, resp) => {
       user_id: { $in: followedUsersIds },
     });
 
-    console.log(teamsMemberShips);
-
     const followedUsers = await Promise.all(
       teamsMemberShips.map(({ user_id }) => FollowedUser.findOne({ user_id }))
     );
 
-    resp.status(200).send(followedUsers);
+    const followedUsersAcounts = await Promise.all(
+      teamsMemberShips.map(({ user_id }) => User.findById(user_id))
+    );
+
+    const result = followedUsersAcounts.map(
+      ({ firstName, lastName }, index) => ({
+        ...followedUsers[index]._doc,
+        firstName,
+        lastName,
+      })
+    );
+    resp.status(200).send(result);
   }
 };
 
@@ -269,7 +270,9 @@ exports.updateProfilePicture = async (req, resp) => {
     else {
       User.updateOne({ _id: user._id }, { $set: { profilePicture: fileUrl } })
         .then((done) => {
-          resp.status(200).send({ message: "file uploaded", profilePicture: fileUrl });
+          resp
+            .status(200)
+            .send({ message: "file uploaded", profilePicture: fileUrl });
         })
         .catch((error) => {
           resp.status(500).send(error);
