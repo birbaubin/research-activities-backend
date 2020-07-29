@@ -83,7 +83,8 @@ exports.findUser = async (req, resp) => {
 
 exports.findAllUsers = async (req, resp) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select("-password");
+    console.log(users);
     resp.status(200).send(users);
   } catch (error) {
     console.log(error);
