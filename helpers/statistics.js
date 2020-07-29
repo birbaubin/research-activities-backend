@@ -6,7 +6,6 @@ const Team = require("../models/team");
 
 const getFollowedUsers = async (query) => {
   const { laboratoryAbbreviation, teamAbbreviation } = query;
-
   const followedUsers = await FollowedUser.find();
   const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
@@ -38,7 +37,21 @@ const getFollowedUsers = async (query) => {
         .map(({ user_id }) => FollowedUser.findOne({ user_id }))
     );
 
-    return followedUsers;
+    const followedUsersAcounts = await Promise.all(
+      teamsMemberShips
+        .flatMap((t) => t)
+        .map(({ user_id }) => User.findById(user_id))
+    );
+
+    const result = followedUsersAcounts.map(
+      ({ firstName, lastName }, index) => ({
+        ...followedUsers[index]._doc,
+        firstName,
+        lastName,
+      })
+    );
+    console.log(result);
+    return result;
   }
 
   if (teamAbbreviation) {
@@ -56,7 +69,20 @@ const getFollowedUsers = async (query) => {
       teamsMemberShips.map(({ user_id }) => FollowedUser.findOne({ user_id }))
     );
 
-    return followedUsers;
+    const followedUsersAcounts = await Promise.all(
+      teamsMemberShips.map(({ user_id }) => User.findById(user_id))
+    );
+
+    const result = followedUsersAcounts.map(
+      ({ firstName, lastName }, index) => ({
+        ...followedUsers[index]._doc,
+        firstName,
+        lastName,
+      })
+    );
+
+    console.log(result);
+    return result;
   }
 };
 
@@ -70,12 +96,16 @@ exports.getStatistics = async (req, resp) => {
   });
 
   const followedUsersStatistics = followedUsers.map(
-    ({ name, publications, profilePicture, ...user }) => {
+    ({ firstName, lastName, publications, profilePicture, ...user }) => {
       const yearlyPublications = publications
         .map((publication) => publication.year)
         .reduce((r, c) => ((r[c] = (r[c] || 0) + 1), r), {});
 
-      return { name, profilePicture, yearlyPublications };
+      return {
+        name: firstName + " " + lastName,
+        profilePicture,
+        yearlyPublications,
+      };
     }
   );
 
@@ -170,7 +200,7 @@ async function getNumberOfLabsPerUniv() {
 async function getNumberOfLabsPerEstablishment() {
   let statistic = null;
   const establishments = await Establishment.find();
-  return  Promise.all(
+  return Promise.all(
     establishments.map(async (establishment) => {
       let numberOfLabs = 0;
       numberOfLabs += await Laboratory.countDocuments({
@@ -181,8 +211,7 @@ async function getNumberOfLabsPerEstablishment() {
         numberOfLabs: numberOfLabs,
       };
     })
-  )
-  .catch((error) => {
+  ).catch((error) => {
     throw error;
   });
 
