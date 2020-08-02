@@ -287,9 +287,18 @@ exports.getFilteringOptions = async (req, resp) => {
   const laboratory = await Laboratory.findOne({
     head_id: laboratoryHeadId,
   });
-  const teams = await Team.find({
-    laboratory_id: laboratory._id,
-  });
+
+  if(!laboratory){
+    teams = await Team.find({
+      head_id: laboratoryHeadId
+    });
+  }
+  else{
+     teams = await Team.find({
+      laboratory_id: laboratory._id,
+    });
+  }
+  
   const followedUsers = await FollowedUser.find();
   const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
