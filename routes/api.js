@@ -3,6 +3,7 @@ const passport = require("passport");
 const UniversityController = require("../controllers/UniversityController");
 const EstablishmentController = require("../controllers/EstablishmentController");
 const LaboratoryController = require("../controllers/LaboratoryController");
+const NotificationController = require("../controllers/NotificationController");
 const UserController = require("../controllers/UserController");
 const TeamController = require("../controllers/TeamController");
 const authorize = require("../helpers/authorize");
@@ -235,5 +236,26 @@ router.get(
 router.get("/statistics", statisticsHelper.getStatistics);
 
 router.get("/all-statistics", statisticsHelper.getAllStatistics);
+
+
+/***************** Notifications endpoints **************/
+
+router.post(
+  "/notify-followers",
+  authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
+  NotificationController.notifyFolloweers
+);
+
+router.post(
+  "/mark-notification-as-read/:notification_id",
+  authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
+  NotificationController.markNotificationAsRead
+);
+
+router.get(
+  "/notifications/:user_id",
+  authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
+  NotificationController.findUserNotifications
+);
 
 module.exports = router;
