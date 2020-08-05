@@ -185,7 +185,21 @@ exports.getFollowedUsers = async (req, resp) => {
         .map(({ user_id }) => FollowedUser.findOne({ user_id }))
     );
 
-    resp.status(200).send(followedUsers);
+    const followedUsersAcounts = await Promise.all(
+      teamsMemberShips
+        .flatMap((t) => t)
+        .map(({ user_id }) => User.findById(user_id))
+    );
+
+    
+    const result = followedUsersAcounts.map(
+      ({ firstName, lastName }, index) => ({
+        ...followedUsers[index]._doc,
+        firstName,
+        lastName,
+      })
+    );
+    resp.status(200).send(result);
   }
 
   if (teamAbbreviation) {
