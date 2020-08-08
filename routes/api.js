@@ -50,9 +50,9 @@ router.get("/researchers", UserController.getResearchers);
 
 router.post("/follow", UserController.followUser);
 
-router.get("/unfollow/:scholarId", UserController.unfollowUser);
+router.get("/unfollow/:authorId", UserController.unfollowUser);
 
-router.get("/is-following/:scholarId", UserController.isFollowing);
+router.get("/is-following/:authorId", UserController.isFollowing);
 
 router.get("/followed-users", UserController.getFollowedUsers);
 

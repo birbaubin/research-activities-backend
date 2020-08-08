@@ -6,7 +6,7 @@ const NotificationSchema = new Schema({
   isRead: Boolean,
   message: String,
   publication: Object,
-  scholarId: String,
+  authorId: String,
   profilePicture: String,
   fullName:String,
   user_id: {
