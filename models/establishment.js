@@ -19,6 +19,17 @@ const EstablishmentSchema = new Schema({
     ref: "University",
     required: [true],
   },
+  research_director_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: [false],
+  },
+  direction_history : [{
+    start: String,
+    end: String,
+    director: Object
+  }  
+]
 });
 
 const Establishment = mongoose.model("establishment", EstablishmentSchema);
