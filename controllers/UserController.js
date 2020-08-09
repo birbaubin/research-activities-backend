@@ -116,7 +116,7 @@ exports.followUser = async (req, resp) => {
 exports.updateFollowedUser = async (req, resp) => {
   try {
     const result = await FollowedUser.findOneAndUpdate(
-      { scholarId: req.body.scholarId },
+      { authorId: req.body.authorId },
       { $set: { ...req.body } }
     );
     resp.status(200).send({ status: "User Updated" });
@@ -128,7 +128,7 @@ exports.updateFollowedUser = async (req, resp) => {
 exports.unfollowUser = async (req, resp) => {
   try {
     const result = await FollowedUser.findOneAndDelete({
-      scholarId: req.params.scholarId,
+      authorId: req.params.authorId,
     });
     resp.status(200).send({ status: "User unfollowed" });
   } catch (error) {
@@ -137,7 +137,7 @@ exports.unfollowUser = async (req, resp) => {
 };
 
 exports.isFollowing = async (req, resp) => {
-  const users = await FollowedUser.find({ scholarId: req.params.scholarId });
+  const users = await FollowedUser.find({ authorId: req.params.authorId });
   if (users.length == 0)
     resp.status(200).send({
       isFollowing: false,

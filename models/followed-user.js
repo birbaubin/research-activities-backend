@@ -5,7 +5,7 @@ const Publication = require("./publication");
 const User = require("./user");
 
 const FollowedUserSchema = new Schema({
-  scholarId: String,
+  authorId: String,
   name: String,
   email: String,
   indexes: Array,
