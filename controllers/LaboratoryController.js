@@ -97,6 +97,31 @@ exports.findAllLaboratories = async (req, resp) => {
   }
 };
 
+
+exports.findLaboratoriesOfDirector = async (req, resp) => {
+  try {
+
+    const establishment = await Establishment.findOne({research_director_id: req.params.user_id});
+    if(!establishment)
+      resp.status(404).send({message: "Establishment not found"});
+    
+    const laboratories = await Laboratory.find({establishment_id: establishment._id});
+    const laboratories_1 = await Promise.all(
+      laboratories.map(async (laboratory) => ({
+        ...laboratory._doc,
+        establishment: await Establishment.findById(
+          laboratory.establishment_id
+        ),
+        teams: await Team.find({ laboratory_id: laboratory._id }),
+      }))
+    );
+    resp.status(200).send(laboratories_1);
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send(error);
+  }
+};
+
 exports.deleteLaboratory = async (req, resp) => {
   try {
     const result = await Laboratory.deleteOne({ _id: req.params._id });
