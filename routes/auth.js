@@ -25,6 +25,7 @@ router.post("/login", async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
       if (err || !user) {
+        console.log("user:", user, " err: ", err)
         return next(info);
       }
       req.login(user, { session: false }, async (error) => {
