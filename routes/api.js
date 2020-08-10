@@ -153,7 +153,6 @@ router.put(
 
 router.get(
   "/laboratories/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.SEARCHER_HEAD]),
   LaboratoryController.findLaboratory
 );
 
@@ -207,7 +206,6 @@ router.get(
 
 router.get(
   "/teams/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
   TeamController.findTeam
 );
 
