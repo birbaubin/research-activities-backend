@@ -9,6 +9,7 @@ const TeamController = require("../controllers/TeamController");
 const authorize = require("../helpers/authorize");
 const role = require("../helpers/role");
 const statisticsHelper = require("../helpers/statistics");
+const PhdStudentController = require("../controllers/PhdStudentController");
 
 const router = express.Router();
 
@@ -264,5 +265,44 @@ router.get(
 router.get("/research-director/:establishment_id", EstablishmentController.getResearchDirector);
 
 router.post("/research-director/:establishment_id/:user_id", EstablishmentController.changeResearchDirector)
+
+/***************** Phd students  endpoints **************/
+router.post(
+  "/phdStudents",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+ 
+    PhdStudentController.createPhdStudent
+  
+);
+
+router.put(
+  "/phdStudents",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+  
+
+    PhdStudentController.updatePhdStudent  
+);
+router.get(
+  "/phdStudents/:_id",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+  PhdStudentController.findPhdStudent
+);
+
+
+router.get(
+  "/phdStudents",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+  PhdStudentController.findAllPhdStudents
+);
+
+
+router.delete(
+  "/phdStudents/:_id",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+  PhdStudentController.deletePhdStudent
+);
+
+
+
 
 module.exports = router;
