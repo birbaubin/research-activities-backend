@@ -17,7 +17,7 @@ const UniversitySchema = new Schema({
   city: {
     type: String,
     required: [true],
-  },
+  }
 });
 
 const University = mongoose.model("univerity", UniversitySchema);

@@ -163,6 +163,11 @@ router.get(
   LaboratoryController.findAllLaboratories
 );
 
+router.get(
+  "/laboratories-of-director/:user_id",
+  LaboratoryController.findLaboratoriesOfDirector
+);
+
 router.delete(
   "/laboratories/:_id",
   authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
@@ -257,5 +262,9 @@ router.get(
   authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
   NotificationController.findUserNotifications
 );
+
+router.get("/research-director/:establishment_id", EstablishmentController.getResearchDirector);
+
+router.post("/research-director/:establishment_id/:user_id", EstablishmentController.changeResearchDirector)
 
 module.exports = router;
