@@ -9,7 +9,7 @@ const Team = require("../models/team");
 const mailSender = require("../helpers/mail-sender");
 const roles = require("../helpers/role");
 const userHelper = require("../helpers/user-helper");
-const PhdStudent = require("../models/PhdStudent");
+const PhdStudent = require("../models/phdStudent");
 
 exports.createUser = async (req, resp) => {
   const { email, password, role, creatorId } = req.body;
