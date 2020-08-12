@@ -29,7 +29,7 @@ router.get(
 
 router.get(
   "/users",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD,role.RESEARCHER,role.TEAM_HEAD]),
   UserController.findAllUsers
 );
 
@@ -269,7 +269,7 @@ router.post("/research-director/:establishment_id/:user_id", EstablishmentContro
 /***************** Phd students  endpoints **************/
 router.post(
   "/phdStudents",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
  
     PhdStudentController.createPhdStudent
   
@@ -277,28 +277,28 @@ router.post(
 
 router.put(
   "/phdStudents",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
   
 
     PhdStudentController.updatePhdStudent  
 );
 router.get(
   "/phdStudents/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
   PhdStudentController.findPhdStudent
 );
 
 
 router.get(
   "/phdStudents",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
   PhdStudentController.findAllPhdStudents
 );
 
 
 router.delete(
   "/phdStudents/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
   PhdStudentController.deletePhdStudent
 );
 
