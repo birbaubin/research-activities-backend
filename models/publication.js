@@ -16,18 +16,23 @@ const PublicationSchema = new Schema({
   },
   searchedFor: {
     type: String,
+    required: false,
   },
   IF: {
     type: String,
+    required: false,
   },
   SJR: {
     type: String,
+    required: false,
   },
   extraInformation: {
     type: Object,
+    required: false,
   },
   source: {
     type: String,
+    required: false,
   },
 });
 
