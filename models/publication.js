@@ -23,6 +23,12 @@ const PublicationSchema = new Schema({
   SJR: {
     type: String,
   },
+  extraInformation: {
+    type: Object,
+  },
+  source: {
+    type: String,
+  },
 });
 
 const Publication = mongoose.model("publication", PublicationSchema);
