@@ -19,6 +19,7 @@ const FollowedUserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  platform: String,
 });
 
 const FollowedUserModel = mongoose.model("followed-user", FollowedUserSchema);
