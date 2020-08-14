@@ -24,15 +24,15 @@ exports.notifyFolloweers = async (req, resp) => {
   try {
     const publication = req.body.publication;
     const followedUserId = req.body.followed_user_id;
-    const scholarId = req.body.scholar_id;
-    const currentPublications = req.body.current_publications;
+    const authorId = req.body.author_id;
+    const scrapedPublications = req.body.scraped_publications;
 
-    if (!publication || !followedUserId || !scholarId || !currentPublications)
-      throw Error("No publication or No followedUserId or scholarId");
+    if (!publication || !followedUserId || !authorId || !scrapedPublications)
+      throw Error("No publication or No followedUserId or authorId");
 
     const isUpdated = await FollowedUser.updateOne(
       { user_id: followedUserId },
-      { $set: { publications: currentPublications } }
+      { $set: { publications: scrapedPublications } }
     );
 
     if (!isUpdated.ok) throw Error("reseracher publications were not updated");
@@ -66,7 +66,7 @@ exports.notifyFolloweers = async (req, resp) => {
         async (user_id) =>
           await Notification.create({
             user_id,
-            scholarId,
+            authorId,
             publication,
             profilePicture: followedUser.profilePicture,
             fullName,

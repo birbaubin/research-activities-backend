@@ -5,7 +5,7 @@ const Publication = require("./publication");
 const User = require("./user");
 
 const FollowedUserSchema = new Schema({
-  scholarId: String,
+  authorId: String,
   name: String,
   email: String,
   indexes: Array,
@@ -19,6 +19,7 @@ const FollowedUserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  platform: String,
 });
 
 const FollowedUserModel = mongoose.model("followed-user", FollowedUserSchema);

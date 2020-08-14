@@ -45,7 +45,7 @@ const UserSchema = new Schema({
   isDirector: {
     type: Boolean,
     required: false
-  }
+  },
 });
 
 UserSchema.pre("save", async function (next) {
