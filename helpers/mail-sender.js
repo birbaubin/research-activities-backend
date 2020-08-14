@@ -2,6 +2,8 @@ const nodemailer = require("nodemailer");
 const config = require("../config");
 
 exports.sendEmail = function (user) {
+
+  console.log(config.EMAIL_PASSWORD, config.EMAIL_ADDRESS);
   const promise = new Promise((resolve, reject) => {
     console.log(__dirname + "../public/mail-template.html");
     let transporter = nodemailer.createTransport({
