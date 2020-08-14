@@ -16,7 +16,7 @@ const PhdStudentSchema = new Schema({
     ref: "User",
     required: [false],
   },
-  cotutelle: { type: String, required: true },
+  cotutelle: { type: Boolean, required: true },
   start: { type: String, required: true },
   end: { type: String, required: true },
 });
