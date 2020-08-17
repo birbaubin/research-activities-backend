@@ -9,6 +9,7 @@ const TeamController = require("../controllers/TeamController");
 const authorize = require("../helpers/authorize");
 const role = require("../helpers/role");
 const statisticsHelper = require("../helpers/statistics");
+const PhdStudentController = require("../controllers/PhdStudentController");
 
 const router = express.Router();
 
@@ -28,7 +29,7 @@ router.get(
 
 router.get(
   "/users",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD,role.RESEARCHER,role.TEAM_HEAD]),
   UserController.findAllUsers
 );
 
@@ -50,9 +51,9 @@ router.get("/researchers", UserController.getResearchers);
 
 router.post("/follow", UserController.followUser);
 
-router.get("/unfollow/:scholarId", UserController.unfollowUser);
+router.get("/unfollow/:authorId", UserController.unfollowUser);
 
-router.get("/is-following/:scholarId", UserController.isFollowing);
+router.get("/is-following/:authorId", UserController.isFollowing);
 
 router.get("/followed-users", UserController.getFollowedUsers);
 
@@ -264,5 +265,44 @@ router.get(
 router.get("/research-director/:establishment_id", EstablishmentController.getResearchDirector);
 
 router.post("/research-director/:establishment_id/:user_id", EstablishmentController.changeResearchDirector)
+
+/***************** Phd students  endpoints **************/
+router.post(
+  "/phdStudents",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+ 
+    PhdStudentController.createPhdStudent
+  
+);
+
+router.put(
+  "/phdStudents",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+  
+
+    PhdStudentController.updatePhdStudent  
+);
+router.get(
+  "/phdStudents/:_id",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+  PhdStudentController.findPhdStudent
+);
+
+
+router.get(
+  "/phdStudents",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+  PhdStudentController.findAllPhdStudents
+);
+
+
+router.delete(
+  "/phdStudents/:_id",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+  PhdStudentController.deletePhdStudent
+);
+
+
+
 
 module.exports = router;
