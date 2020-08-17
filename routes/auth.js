@@ -7,6 +7,7 @@ const User = require("../models/user");
 const Team = require("../models/team");
 const TeamMemberShip = require("../models/team-membership");
 const Laboratory = require("../models/laboratory");
+const Establishment = require("../models/establishment");
 
 const router = express.Router();
 
@@ -52,12 +53,15 @@ router.post("/login", async (req, res, next) => {
           )
         );
 
+      const establishmentsDirected = await Establishment.find({research_director_id: user._id});
+
         return res.json({
           ...user._doc,
           token,
           laboratoriesHeaded,
           teamsHeaded,
           teamsMemberships,
+          establishmentsDirected
         });
       });
     } catch (error) {
