@@ -1,7 +1,6 @@
 const Laboratory = require("../models/laboratory");
 const Establishment = require("../models/establishment");
 const userHelper = require("../helpers/user-helper");
-const statistics =  require("../helpers/statistics");
 const University = require("../models/university");
 const Team = require("../models/team");
 const User = require("../models/user");
@@ -30,7 +29,6 @@ exports.updateLaboratory = async (req, resp) => {
     resp.status(500).send(error);
   }
 };
-
 
 exports.updateLaboratory = async (req, resp) => {
   try {

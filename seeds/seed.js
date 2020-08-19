@@ -5,7 +5,7 @@ const config = require("../config");
 
 mongoose.set("useCreateIndex", true);
 mongoose
-    .connect("mongodb://heroku_1b8nz662:hpueci1942ulml4c9h1runn5qk@ds113826.mlab.com:13826/heroku_1b8nz662", {
+    .connect(config.MONGODB_URI, {
         useUnifiedTopology: true,
         useNewUrlParser: true,
     })
@@ -15,14 +15,14 @@ mongoose
 const User = require("../models/user");
 const University = require("../models/university");
 const Establishment = require("../models/establishment");
-const Laboratory = require("../models/laboratoryestablishments");
+const Laboratory = require("../models/laboratory");
 const Team = require("../models/team");
 const FollowedUser = require("../models/followed-user");
 const TeamMembership = require("../models/team-membership");
 
 const users = require("./data/users");
 const universities = require("./data/universities");
-const establishments = require("./data/");
+const establishments = require("./data/establishments");
 const laboratories = require("./data/laboratories");
 const teams = require("./data/teams");
 
