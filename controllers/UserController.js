@@ -10,6 +10,7 @@ const mailSender = require("../helpers/mail-sender");
 const roles = require("../helpers/role");
 const userHelper = require("../helpers/user-helper");
 const PhdStudent = require("../models/phdStudent");
+const Establishment = require("../models/establishment");
 
 exports.createUser = async (req, resp) => {
   const { email, password, role, creatorId } = req.body;
@@ -266,20 +267,26 @@ exports.updateProfilePicture = async (req, resp) => {
 };
 
 exports.getFilteringOptions = async (req, resp) => {
-  const laboratoryHeadId = req.params.laboratoryHeadId;
+  const user_id = req.params.user_id;
+  let teams = [];
   const laboratory = await Laboratory.findOne({
-    head_id: laboratoryHeadId,
+    head_id: user_id,
   });
 
+  
   if (!laboratory) {
     teams = await Team.find({
-      head_id: laboratoryHeadId,
+      head_id: user_id,
     });
   } else {
     teams = await Team.find({
       laboratory_id: laboratory._id,
     });
   }
+
+
+
+  console.log(teams);
 
   const followedUsers = await FollowedUser.find();
   const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
