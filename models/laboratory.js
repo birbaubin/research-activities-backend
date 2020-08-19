@@ -28,6 +28,10 @@ const LaboratorySchema = new Schema({
       active: Boolean,
     },
   ],
+    budget : {
+      type: Object
+    },
+ 
 });
 
 const Laboratory = mongoose.model("laboratory", LaboratorySchema);
