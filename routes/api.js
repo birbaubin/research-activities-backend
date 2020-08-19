@@ -3,11 +3,13 @@ const passport = require("passport");
 const UniversityController = require("../controllers/UniversityController");
 const EstablishmentController = require("../controllers/EstablishmentController");
 const LaboratoryController = require("../controllers/LaboratoryController");
+const NotificationController = require("../controllers/NotificationController");
 const UserController = require("../controllers/UserController");
 const TeamController = require("../controllers/TeamController");
 const authorize = require("../helpers/authorize");
 const role = require("../helpers/role");
 const statisticsHelper = require("../helpers/statistics");
+const PhdStudentController = require("../controllers/PhdStudentController");
 
 const router = express.Router();
 
@@ -27,7 +29,7 @@ router.get(
 
 router.get(
   "/users",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD,role.RESEARCHER,role.TEAM_HEAD]),
   UserController.findAllUsers
 );
 
@@ -49,9 +51,9 @@ router.get("/researchers", UserController.getResearchers);
 
 router.post("/follow", UserController.followUser);
 
-router.get("/unfollow/:scholarId", UserController.unfollowUser);
+router.get("/unfollow/:authorId", UserController.unfollowUser);
 
-router.get("/is-following/:scholarId", UserController.isFollowing);
+router.get("/is-following/:authorId", UserController.isFollowing);
 
 router.get("/followed-users", UserController.getFollowedUsers);
 
@@ -152,7 +154,6 @@ router.put(
 
 router.get(
   "/laboratories/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.SEARCHER_HEAD]),
   LaboratoryController.findLaboratory
 );
 
@@ -160,6 +161,11 @@ router.get(
   "/laboratories",
   authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
   LaboratoryController.findAllLaboratories
+);
+
+router.get(
+  "/laboratories-of-director/:user_id",
+  LaboratoryController.findLaboratoriesOfDirector
 );
 
 router.delete(
@@ -201,7 +207,6 @@ router.get(
 
 router.get(
   "/teams/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
   TeamController.findTeam
 );
 
@@ -235,5 +240,69 @@ router.get(
 router.get("/statistics", statisticsHelper.getStatistics);
 
 router.get("/all-statistics", statisticsHelper.getAllStatistics);
+
+
+/***************** Notifications endpoints **************/
+
+router.post(
+  "/notify-followers",
+  authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
+  NotificationController.notifyFolloweers
+);
+
+router.post(
+  "/mark-notification-as-read/:notification_id",
+  authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
+  NotificationController.markNotificationAsRead
+);
+
+router.get(
+  "/notifications/:user_id",
+  authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
+  NotificationController.findUserNotifications
+);
+
+router.get("/research-director/:establishment_id", EstablishmentController.getResearchDirector);
+
+router.post("/research-director/:establishment_id/:user_id", EstablishmentController.changeResearchDirector)
+
+/***************** Phd students  endpoints **************/
+router.post(
+  "/phdStudents",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+ 
+    PhdStudentController.createPhdStudent
+  
+);
+
+router.put(
+  "/phdStudents",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+  
+
+    PhdStudentController.updatePhdStudent  
+);
+router.get(
+  "/phdStudents/:_id",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+  PhdStudentController.findPhdStudent
+);
+
+
+router.get(
+  "/phdStudents",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+  PhdStudentController.findAllPhdStudents
+);
+
+
+router.delete(
+  "/phdStudents/:_id",
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
+  PhdStudentController.deletePhdStudent
+);
+
+
+
 
 module.exports = router;

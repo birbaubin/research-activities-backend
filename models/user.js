@@ -42,6 +42,10 @@ const UserSchema = new Schema({
     ref: "User",
     required: false,
   },
+  isDirector: {
+    type: Boolean,
+    required: false
+  },
 });
 
 UserSchema.pre("save", async function (next) {

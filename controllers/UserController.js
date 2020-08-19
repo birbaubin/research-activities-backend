@@ -9,12 +9,12 @@ const Team = require("../models/team");
 const mailSender = require("../helpers/mail-sender");
 const roles = require("../helpers/role");
 const userHelper = require("../helpers/user-helper");
+const PhdStudent = require("../models/phdStudent");
 
 exports.createUser = async (req, resp) => {
   const { email, password, role, creatorId } = req.body;
   const rolesArray = [roles.CED_HEAD, roles.LABORATORY_HEAD, roles.RESEARCHER];
   if (!rolesArray.includes(req.body.role)) {
-    console.log("error occured");
     resp.status(400).send({ error: "Incorrect role value" });
   } else {
     try {
@@ -36,10 +36,7 @@ exports.createUser = async (req, resp) => {
 
 exports.updateUser = async (req, resp) => {
   try {
-    const result = await User.updateOne(
-      { _id: req.body._id },
-      { $set: req.body, hasConfirmed: true, generatedPassword: "" }
-    );
+    const result = await User.updateOne({ _id: req.body._id }, { $set: req.body, hasConfirmed: true, generatedPassword: "" });
     resp.status(200).send(result);
   } catch (error) {
     console.log(error);
@@ -62,12 +59,11 @@ exports.findUser = async (req, resp) => {
     user_id: user._id,
     active: true,
   });
+  const phdStudents = await PhdStudent.find({
+    supervisor: user._id,
+  });
 
-  await Promise.all(
-    teamsMemberships.map((teamsMembership) =>
-      Team.findOne({ _id: teamsMembership.team_id })
-    )
-  );
+  await Promise.all(teamsMemberships.map((teamsMembership) => Team.findOne({ _id: teamsMembership.team_id })));
 
   const correspondingFollowedUser = await FollowedUser.findOne({
     user_id: user._id,
@@ -79,12 +75,13 @@ exports.findUser = async (req, resp) => {
     teamsHeaded,
     teamsMemberships,
     correspondingFollowedUser,
+    phdStudents,
   });
 };
 
 exports.findAllUsers = async (req, resp) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select("-password");
     resp.status(200).send(users);
   } catch (error) {
     console.log(error);
@@ -103,11 +100,8 @@ exports.deleteUser = async (req, resp) => {
 };
 
 exports.followUser = async (req, resp) => {
-  console.log("follow");
-
   try {
     const result = await FollowedUser.create(req.body);
-    console.log(result);
 
     resp.status(200).send({ status: "User followed" });
   } catch (error) {
@@ -117,13 +111,8 @@ exports.followUser = async (req, resp) => {
   }
 };
 exports.updateFollowedUser = async (req, resp) => {
-  console.log("updateFollowedUser");
-
   try {
-    const result = await FollowedUser.findOneAndUpdate(
-      { scholarId: req.body.scholarId },
-      { $set: { ...req.body } }
-    );
+    const result = await FollowedUser.findOneAndUpdate({ authorId: req.body.authorId }, { $set: { ...req.body } });
     resp.status(200).send({ status: "User Updated" });
   } catch (error) {
     resp.status(500).send(error);
@@ -133,7 +122,7 @@ exports.updateFollowedUser = async (req, resp) => {
 exports.unfollowUser = async (req, resp) => {
   try {
     const result = await FollowedUser.findOneAndDelete({
-      scholarId: req.params.scholarId,
+      authorId: req.params.authorId,
     });
     resp.status(200).send({ status: "User unfollowed" });
   } catch (error) {
@@ -142,9 +131,7 @@ exports.unfollowUser = async (req, resp) => {
 };
 
 exports.isFollowing = async (req, resp) => {
-  console.log(req.params.scholarId);
-  const users = await FollowedUser.find({ scholarId: req.params.scholarId });
-  console.log();
+  const users = await FollowedUser.find({ authorId: req.params.authorId });
   if (users.length == 0)
     resp.status(200).send({
       isFollowing: false,
@@ -186,13 +173,16 @@ exports.getFollowedUsers = async (req, resp) => {
       )
     );
 
-    const followedUsers = await Promise.all(
-      teamsMemberShips
-        .flatMap((t) => t)
-        .map(({ user_id }) => FollowedUser.findOne({ user_id }))
-    );
+    const followedUsers = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => FollowedUser.findOne({ user_id })));
 
-    resp.status(200).send(followedUsers);
+    const followedUsersAcounts = await Promise.all(teamsMemberShips.flatMap((t) => t).map(({ user_id }) => User.findById(user_id)));
+
+    const result = followedUsersAcounts.map(({ firstName, lastName }, index) => ({
+      ...followedUsers[index]._doc,
+      firstName,
+      lastName,
+    }));
+    resp.status(200).send(result);
   }
 
   if (teamAbbreviation) {
@@ -206,13 +196,16 @@ exports.getFollowedUsers = async (req, resp) => {
       user_id: { $in: followedUsersIds },
     });
 
-    console.log(teamsMemberShips);
+    const followedUsers = await Promise.all(teamsMemberShips.map(({ user_id }) => FollowedUser.findOne({ user_id })));
 
-    const followedUsers = await Promise.all(
-      teamsMemberShips.map(({ user_id }) => FollowedUser.findOne({ user_id }))
-    );
+    const followedUsersAcounts = await Promise.all(teamsMemberShips.map(({ user_id }) => User.findById(user_id)));
 
-    resp.status(200).send(followedUsers);
+    const result = followedUsersAcounts.map(({ firstName, lastName }, index) => ({
+      ...followedUsers[index]._doc,
+      firstName,
+      lastName,
+    }));
+    resp.status(200).send(result);
   }
 };
 
@@ -250,16 +243,10 @@ exports.updateProfilePicture = async (req, resp) => {
   let file = req.files.file;
   let user = userHelper.requesterUser(req);
   let userFromDB = await User.findById(user._id, "profilePicture");
-  if (
-    userFromDB.profilePicture !== undefined &&
-    userFromDB.profilePicture !== "default.png"
-  ) {
-    fs.unlink(
-      __dirname + "/../public/images/" + userFromDB.profilePicture,
-      (err) => {
-        if (err) resp.status(500).send(err);
-      }
-    );
+  if (userFromDB.profilePicture !== undefined && userFromDB.profilePicture !== "default.png") {
+    fs.unlink(__dirname + "/../public/images/" + userFromDB.profilePicture, (err) => {
+      if (err) resp.status(500).send(err);
+    });
   }
 
   let fileUrl = user._id + file.name;
@@ -283,9 +270,17 @@ exports.getFilteringOptions = async (req, resp) => {
   const laboratory = await Laboratory.findOne({
     head_id: laboratoryHeadId,
   });
-  const teams = await Team.find({
-    laboratory_id: laboratory._id,
-  });
+
+  if (!laboratory) {
+    teams = await Team.find({
+      head_id: laboratoryHeadId,
+    });
+  } else {
+    teams = await Team.find({
+      laboratory_id: laboratory._id,
+    });
+  }
+
   const followedUsers = await FollowedUser.find();
   const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
 
@@ -334,3 +329,13 @@ exports.getFilteringOptions = async (req, resp) => {
 
   resp.status(200).send([...teamsOptions]);
 };
+// exports.getPhdStudents = async (req, resp) => {
+//   let user = userHelper.requesterUser(req);
+//   try {
+//     let userFromDB = await User.findById(user._id, { phdStudents: 1 });
+//     let phdStudents = await PhdStudent.find({supervisor:user._id})
+//     resp.status(200).json(userFromDB);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };

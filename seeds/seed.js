@@ -120,7 +120,6 @@ const seedTeams = () => {
         teams.map(async (team) => {
             const head = await User.findOne();
             const laboratory = await Laboratory.findOne(team.laboratory);
-            console.log(laboratory);
             return Team.create({
                 ...team,
                 laboratory_id: laboratory._id,
@@ -151,7 +150,6 @@ clearData()
     .then(() => timeDelay())
     .then(() => seedTeams())
     .then(() => {
-        console.log("Seeding is done");
         process.exit(0);
     })
     .catch((errors) => {

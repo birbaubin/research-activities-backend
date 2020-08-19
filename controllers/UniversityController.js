@@ -1,5 +1,6 @@
 const University = require("../models/university");
 const Establishment = require("../models/establishment");
+const User = require("../models/user");
 
 exports.createUniversity = async (req, resp) => {
   try {
@@ -65,3 +66,5 @@ exports.getUniversityEstablishments = async (req, resp) => {
     resp.status(500).send(error);
   }
 };
+
+
