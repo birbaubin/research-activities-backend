@@ -121,3 +121,12 @@ exports.changeResearchDirector = async (req, resp) => {
   resp.send(result);
 
 };
+
+
+exports.getEstablishmentOfDirector = async (req, resp) => {
+
+  let establishment = await Establishment.find({research_director_id: req.params.user_id});
+  if(!establishment) resp.status(404).send({message: "Establishment not foud"});
+  resp.send(establishment);
+
+}

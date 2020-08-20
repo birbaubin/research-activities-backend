@@ -26,7 +26,6 @@ router.post("/login", async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
       if (err || !user) {
-        console.log("user:", user, " err: ", err)
         return next(info);
       }
       req.login(user, { session: false }, async (error) => {
@@ -47,13 +46,14 @@ router.post("/login", async (req, res, next) => {
           active: true,
         });
 
+
+        const establishmentsDirected = await Establishment.find({research_director_id: user._id});
+
         await Promise.all(
           teamsMemberships.map((teamsMembership) =>
             Team.findOne({ _id: teamsMembership.team_id })
           )
         );
-
-      const establishmentsDirected = await Establishment.find({research_director_id: user._id});
 
         return res.json({
           ...user._doc,
