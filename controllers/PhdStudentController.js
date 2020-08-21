@@ -10,7 +10,6 @@ const Establishment = require("../models/establishment");
 
 
 
-
 exports.createPhdStudent = async (req, resp) => {
   try {
     const phdStudent = await PhdStudent.create(req.body);
@@ -101,7 +100,4 @@ exports.findStudentsOfUser = async (req, resp) => {
     return resp.status(500).send(error);
   }
 };
-
-
-
 
