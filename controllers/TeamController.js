@@ -131,15 +131,28 @@ exports.removeFromTeam = async (req, resp) => {
 exports.associateHeadToTeam = async (req, resp) => {
   try {
     let team = await Team.findById(req.params.team_id);
-
-    await User.updateOne(
-      { _id: team.head_id },
-      { $set: { role: "RESEARCHER", hasConfirmed: true } }
-    );
+    if (team.head_id) {
+      const oldTeamHead = await User.findById(team.head_id);
+      await User.updateOne(
+        { _id: team.head_id },
+        {
+          $set: {
+            roles: [...oldTeamHead.roles.filter((r) => r !== "TEAM_HEAD")],
+            hasConfirmed: true,
+          },
+        }
+      );
+    }
+    const newTeamHead = await User.findById(req.params.head_id);
 
     const update = await User.updateOne(
       { _id: req.params.head_id },
-      { $set: { role: "TEAM_HEAD", hasConfirmed: true } }
+      {
+        $set: {
+          roles: ["TEAM_HEAD", ...newTeamHead.roles],
+          hasConfirmed: true,
+        },
+      }
     );
 
     const head = await User.findById(req.params.head_id);

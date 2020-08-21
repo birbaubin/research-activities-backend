@@ -21,10 +21,7 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  role: {
-    type: String,
-    required: true,
-  },
+  roles: [String],
   hasConfirmed: {
     type: Boolean,
     required: false,
