@@ -8,12 +8,12 @@ const PhdStudentSchema = new Schema({
   thesisTitle: { type: String, required: true },
   supervisor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
     required: [true],
   },
   coSupervisor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
     required: [false],
   },
   cotutelle: { type: Boolean, required: true },
