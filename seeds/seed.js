@@ -38,7 +38,7 @@ const clearData = () =>
     ]);
 
 const seedCEDHead = async () => Promise.all(users
-    .filter(({role}) => role === "CED_HEAD")
+    .filter(({roles}) => roles.includes("CED_HEAD"))
     .map((user) =>
         User.create({
             ...user,
@@ -47,9 +47,9 @@ const seedCEDHead = async () => Promise.all(users
     ));
 
 const seedLaboratoryHeads = async () => {
-    const CEDHeads = await User.find({role: "CED_HEAD"});
+    const CEDHeads = await User.find({roles: "CED_HEAD"});
     const seeding = users
-        .filter(({role}) => role === "LABORATORY_HEAD")
+        .filter(({roles}) => roles.includes("LABORATORY_HEAD"))
         .map((user) =>
             User.create({
                 ...user,
@@ -65,7 +65,7 @@ const seedResearchers = async () => {
     const LaboratoryHeads = await User.find({roles: "LABORATORY_HEAD"});
 
     const seeding = users
-        .filter(({role}) => role === "RESEARCHER")
+        .filter(({roles}) => roles.includes("RESEARCHER"))
         .map((user) =>
             User.create({
                 ...user,

@@ -24,7 +24,7 @@ passport.use(
           roles.LABORATORY_HEAD,
           roles.RESEARCHER,
         ];
-        if (!rolesArray.includes(req.body.role)) {
+        if (req.body.roles.every((r) => rolesArray.includes(r))) {
           console.log("error occured");
         }
 

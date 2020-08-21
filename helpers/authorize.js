@@ -12,7 +12,7 @@ function authorize(roles = []) {
       algorithms: ["HS256"],
     }),
     (req, res, next) => {
-      if (roles.length && !roles.includes(req.user.user.role)) {
+      if (roles.length && !req.user.user.roles.some(r=> roles.includes(r))) {
         return res.status(401).json({ message: "Unauthorized" });
       }
       next();
