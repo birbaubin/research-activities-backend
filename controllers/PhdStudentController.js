@@ -6,6 +6,7 @@ const Team = require("../models/team");
 const Laboratory = require("../models/laboratory");
 const TeamMemberShip = require("../models/team-membership");
 const PhdStudent = mongoose.model("phdStudent");
+const Establishment = require("../models/establishment");
 
 
 
@@ -81,25 +82,22 @@ exports.deletePhdStudent = async (req, resp) => {
 exports.findStudentsOfUser = async (req, resp) => {
   try {
     const { _id } = req.user.user;
-    console.log("ID",_id)
-    let laboratories = await Laboratory.find({head_id:_id})
+    let establishments = await Establishment.find({research_director_id: _id}); 
+    establishments = establishments.map(est => est._id);
+    let laboratories = await Laboratory.find({$or : [{head_id:_id}, {establishment_id: {$in : establishments}}]})
     laboratories = laboratories.map(lab => lab._id)
-    console.log('LABS',laboratories);
     let teams = await Team.find({laboratory_id:{$in: laboratories }})
     teams = teams.map(team => team._id);
-    console.log('TEAMS',teams);
     let members = await TeamMemberShip.find({team_id:{$in: teams}})
     members = members.map(member => member.user_id);
     let queryUsers = [mongoose.Types.ObjectId(_id), ...members];
-    console.log("MEMBERS",queryUsers);
-
     let students = await PhdStudent.find({ $or: [{ supervisor:{$in: queryUsers } }, { coSupervisor: {$in: queryUsers} }] })
       .populate("supervisor")
       .populate("coSupervisor");
-    console.log("STUUUDENTS",students);
     return resp.status(200).send({students});
   } catch (error) {
     console.log("ERROR", error);
     return resp.status(500).send(error);
   }
 };
+
