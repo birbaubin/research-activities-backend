@@ -10,6 +10,7 @@ const authorize = require("../helpers/authorize");
 const role = require("../helpers/role");
 const statisticsHelper = require("../helpers/statistics");
 const PhdStudentController = require("../controllers/PhdStudentController");
+const { route } = require("./auth");
 
 const router = express.Router();
 
@@ -73,6 +74,11 @@ router.get("/establishments", authorize([role.CED_HEAD]), EstablishmentControlle
 router.delete("/establishments/:_id", authorize([role.CED_HEAD]), EstablishmentController.deleteEstablishment);
 
 router.get("/establishments/:_id/laboratories", authorize([role.CED_HEAD]), EstablishmentController.getEstablishmentLaboratories);
+
+router.get(
+  "/establishments/research-director/:user_id", 
+  EstablishmentController.getEstablishmentOfDirector
+)
 
 /************* Laboratories endpoints ***********/
 router.post("/laboratories", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), LaboratoryController.createLaboratory);
