@@ -28,12 +28,12 @@ passport.use(
           console.log("error occured");
         }
 
-        const { email, password, role } = req.body;
+        const { email, password, roles } = req.body;
 
         const user = await User.create({
           email,
           password,
-          role,
+          roles,
         });
 
         return done(null, user);

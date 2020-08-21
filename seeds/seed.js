@@ -62,7 +62,7 @@ const seedLaboratoryHeads = async () => {
 };
 
 const seedResearchers = async () => {
-    const LaboratoryHeads = await User.find({role: "LABORATORY_HEAD"});
+    const LaboratoryHeads = await User.find({roles: "LABORATORY_HEAD"});
 
     const seeding = users
         .filter(({role}) => role === "RESEARCHER")

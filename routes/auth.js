@@ -30,7 +30,7 @@ router.post("/login", async (req, res, next) => {
       }
       req.login(user, { session: false }, async (error) => {
         if (error) return next(error);
-        const body = { _id: user._id, email: user.email, role: user.role };
+        const body = { _id: user._id, email: user.email, roles: user.roles };
         const token = jwt.sign({ user: body }, config.JWT_SECRET);
 
         const laboratoriesHeaded = await Laboratory.find({
