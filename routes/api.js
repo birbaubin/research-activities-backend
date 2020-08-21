@@ -14,30 +14,15 @@ const PhdStudentController = require("../controllers/PhdStudentController");
 const router = express.Router();
 
 /************* Users endpoints ***********/
-router.post(
-  "/users",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
-  UserController.createUser
-);
+router.post("/users", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), UserController.createUser);
 
 router.put("/users", UserController.updateUser);
 
-router.get(
-  "/users/:_id",
-  UserController.findUser
-);
+router.get("/users/:_id", UserController.findUser);
 
-router.get(
-  "/users",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD,role.RESEARCHER,role.TEAM_HEAD]),
-  UserController.findAllUsers
-);
+router.get("/users", authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.RESEARCHER, role.TEAM_HEAD]), UserController.findAllUsers);
 
-router.delete(
-  "/users/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
-  UserController.deleteUser
-);
+router.delete("/users/:_id", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), UserController.deleteUser);
 
 router.post("/users/:_id/update-password", UserController.updatePassword);
 
@@ -59,250 +44,109 @@ router.get("/followed-users", UserController.getFollowedUsers);
 
 router.post("/update-followed-user", UserController.updateFollowedUser);
 
-router.get(
-  "/filtering-options/:laboratoryHeadId",
-  UserController.getFilteringOptions
-);
+router.get("/filtering-options/:laboratoryHeadId", UserController.getFilteringOptions);
 
 /************* Universities endpoints ***********/
 
-router.post(
-  "/universities",
-  authorize([role.CED_HEAD]),
-  UniversityController.createUniversity
-);
+router.post("/universities", authorize([role.CED_HEAD]), UniversityController.createUniversity);
 
-router.put(
-  "/universities",
-  authorize([role.CED_HEAD]),
-  UniversityController.updateUniversity
-);
+router.put("/universities", authorize([role.CED_HEAD]), UniversityController.updateUniversity);
 
-router.get(
-  "/universities/:_id",
-  authorize([role.CED_HEAD]),
-  UniversityController.findUniversity
-);
+router.get("/universities/:_id", authorize([role.CED_HEAD]), UniversityController.findUniversity);
 
-router.get(
-  "/universities",
-  authorize([role.CED_HEAD]),
-  UniversityController.findAllUniversities
-);
+router.get("/universities", authorize([role.CED_HEAD]), UniversityController.findAllUniversities);
 
-router.delete(
-  "/universities/:_id",
-  authorize([role.CED_HEAD]),
-  UniversityController.deleteUniversity
-);
+router.delete("/universities/:_id", authorize([role.CED_HEAD]), UniversityController.deleteUniversity);
 
-router.get(
-  "/universities/:_id/establishments",
-  UniversityController.getUniversityEstablishments
-);
+router.get("/universities/:_id/establishments", UniversityController.getUniversityEstablishments);
 
 /************* Establishments endpoints ***********/
 
-router.post(
-  "/establishments",
-  authorize([role.CED_HEAD]),
-  EstablishmentController.createEstablishment
-);
+router.post("/establishments", authorize([role.CED_HEAD]), EstablishmentController.createEstablishment);
 
-router.put(
-  "/establishments",
-  authorize([role.CED_HEAD]),
-  EstablishmentController.updateEstablishment
-);
+router.put("/establishments", authorize([role.CED_HEAD]), EstablishmentController.updateEstablishment);
 
-router.get(
-  "/establishments/:_id",
-  authorize([role.CED_HEAD]),
-  EstablishmentController.findEstablishment
-);
+router.get("/establishments/:_id", authorize([role.CED_HEAD]), EstablishmentController.findEstablishment);
 
-router.get(
-  "/establishments",
-  authorize([role.CED_HEAD]),
-  EstablishmentController.findAllEstablishments
-);
+router.get("/establishments", authorize([role.CED_HEAD]), EstablishmentController.findAllEstablishments);
 
-router.delete(
-  "/establishments/:_id",
-  authorize([role.CED_HEAD]),
-  EstablishmentController.deleteEstablishment
-);
+router.delete("/establishments/:_id", authorize([role.CED_HEAD]), EstablishmentController.deleteEstablishment);
 
-router.get(
-  "/establishments/:_id/laboratories",
-  authorize([role.CED_HEAD]),
-  EstablishmentController.getEstablishmentLaboratories
-);
+router.get("/establishments/:_id/laboratories", authorize([role.CED_HEAD]), EstablishmentController.getEstablishmentLaboratories);
 
 /************* Laboratories endpoints ***********/
-router.post(
-  "/laboratories",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
-  LaboratoryController.createLaboratory
-);
+router.post("/laboratories", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), LaboratoryController.createLaboratory);
 
-router.put(
-  "/laboratories",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
-  LaboratoryController.updateLaboratory
-);
+router.put("/laboratories", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), LaboratoryController.updateLaboratory);
 
-router.get(
-  "/laboratories/:_id",
-  LaboratoryController.findLaboratory
-);
+router.get("/laboratories/:_id", LaboratoryController.findLaboratory);
 
-router.get(
-  "/laboratories",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
-  LaboratoryController.findAllLaboratories
-);
+router.get("/laboratories", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), LaboratoryController.findAllLaboratories);
 
-router.get(
-  "/laboratories-of-director/:user_id",
-  LaboratoryController.findLaboratoriesOfDirector
-);
+router.get("/laboratories-of-director/:user_id", LaboratoryController.findLaboratoriesOfDirector);
 
-router.delete(
-  "/laboratories/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
-  LaboratoryController.deleteLaboratory
-);
+router.delete("/laboratories/:_id", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), LaboratoryController.deleteLaboratory);
 
-router.get(
-  "/laboratories-of-head/:head_id",
-  LaboratoryController.getLaboratoriesOfHead
-);
+router.get("/laboratories-of-head/:head_id", LaboratoryController.getLaboratoriesOfHead);
 
 router.get("/free-laboratories", LaboratoryController.getFreeLaboratories);
 
-router.get(
-  "/entitle-laboratory/:head_id/:lab_id",
-  LaboratoryController.associateHeadToLaboratory
-);
+router.get("/entitle-laboratory/:head_id/:lab_id", LaboratoryController.associateHeadToLaboratory);
 
 /***************** Teams endpoints **************/
-router.post(
-  "/teams",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
-  TeamController.createTeam
-);
+router.post("/teams", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), TeamController.createTeam);
 
-router.put(
-  "/teams",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
-  TeamController.updateTeam
-);
+router.put("/teams", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), TeamController.updateTeam);
 
-router.get(
-  "/teams",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
-  TeamController.findAllTeams
-);
+router.get("/teams", authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]), TeamController.findAllTeams);
 
-router.get(
-  "/teams/:_id",
-  TeamController.findTeam
-);
+router.get("/teams/:_id", TeamController.findTeam);
 
-router.delete(
-  "/teams/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
-  TeamController.deleteTeam
-);
+router.delete("/teams/:_id", authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]), TeamController.deleteTeam);
 
-router.get(
-  "/add-to-team/:team_id/:user_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
-  TeamController.addUserToTeam
-);
+router.get("/add-to-team/:team_id/:user_id", authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]), TeamController.addUserToTeam);
 
-router.get(
-  "/remove-from-team/:team_id/:user_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]),
-  TeamController.removeFromTeam
-);
+router.get("/remove-from-team/:team_id/:user_id", authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD]), TeamController.removeFromTeam);
 
-
-router.get(
-  "/team-head-association/:team_id/:head_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
-  TeamController.associateHeadToTeam
-);
-
-
+router.get("/team-head-association/:team_id/:head_id", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), TeamController.associateHeadToTeam);
 
 router.get("/statistics", statisticsHelper.getStatistics);
 
 router.get("/all-statistics", statisticsHelper.getAllStatistics);
 
-
 /***************** Notifications endpoints **************/
 
-router.post(
-  "/notify-followers",
-  authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
-  NotificationController.notifyFolloweers
-);
+router.post("/notify-followers", authorize([role.LABORATORY_HEAD, role.TEAM_HEAD]), NotificationController.notifyFolloweers);
 
-router.post(
-  "/mark-notification-as-read/:notification_id",
-  authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
-  NotificationController.markNotificationAsRead
-);
+router.post("/mark-notification-as-read/:notification_id", authorize([role.LABORATORY_HEAD, role.TEAM_HEAD]), NotificationController.markNotificationAsRead);
 
-router.get(
-  "/notifications/:user_id",
-  authorize([role.LABORATORY_HEAD,role.TEAM_HEAD]),
-  NotificationController.findUserNotifications
-);
+router.get("/notifications/:user_id", authorize([role.LABORATORY_HEAD, role.TEAM_HEAD]), NotificationController.findUserNotifications);
 
 router.get("/research-director/:establishment_id", EstablishmentController.getResearchDirector);
 
-router.post("/research-director/:establishment_id/:user_id", EstablishmentController.changeResearchDirector)
+router.post("/research-director/:establishment_id/:user_id", EstablishmentController.changeResearchDirector);
 
 /***************** Phd students  endpoints **************/
 router.post(
   "/phdStudents",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
- 
-    PhdStudentController.createPhdStudent
-  
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD, role.RESEARCHER]),
+
+  PhdStudentController.createPhdStudent
 );
 
 router.put(
   "/phdStudents",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
-  
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD, role.RESEARCHER]),
 
-    PhdStudentController.updatePhdStudent  
-);
-router.get(
-  "/phdStudents/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
-  PhdStudentController.findPhdStudent
+  PhdStudentController.updatePhdStudent
 );
 
+router.get("/phdStudents/:_id", authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD, role.RESEARCHER]), PhdStudentController.findPhdStudent);
 
-router.get(
-  "/phdStudents",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
-  PhdStudentController.findAllPhdStudents
-);
+router.get("/phdStudentsOfUser/", authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD, role.RESEARCHER]), PhdStudentController.findStudentsOfUser);
 
+router.get("/phdStudents", authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD, role.RESEARCHER]), PhdStudentController.findAllPhdStudents);
 
-router.delete(
-  "/phdStudents/:_id",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD,role.RESEARCHER]),
-  PhdStudentController.deletePhdStudent
-);
-
-
-
+router.delete("/phdStudents/:_id", authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.TEAM_HEAD, role.RESEARCHER]), PhdStudentController.deletePhdStudent);
 
 module.exports = router;
