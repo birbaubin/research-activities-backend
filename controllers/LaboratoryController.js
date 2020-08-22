@@ -173,16 +173,13 @@ exports.associateHeadToLaboratory = async (req, resp) => {
 exports.getNodesForOrgChart = async (req, resp) => {
   try {
     const { _id } = req.user;
-    console.log("id", _id);
     let user = await User.findById(_id);
-    console.log("USER", user);
     let laboratories = await Laboratory.find({ head_id: _id });
     let lab = laboratories[0];
     let labName = lab.abbreviation;
     let nodes = [{ id: 0, name: [user.firstName[0], user.lastName].join("."), title: `Chef de laboratoire ${labName}`, img: user.profilePicture || "https://cdn.balkan.app/shared/empty-img-white.svg" }];
     laboratories = laboratories.map((lab) => lab._id);
     let teams = await Team.find({ laboratory_id: { $in: laboratories } }).populate("head_id");
-    console.log("TEAMS", teams);
     teams.map((team) => {
       let head = team.head_id;
       let headName = head ? [head.firstName[0], head.lastName].join('.') : null;
@@ -192,9 +189,7 @@ exports.getNodesForOrgChart = async (req, resp) => {
 
     let heads = teams.map((team) => team.head_id);
     teams = teams.map((team) => team._id);
-    console.log("HEADS", heads);
     let members = await TeamMembership.find({ team_id: { $in: teams }, active:true }).populate("user_id").populate("team_id");
-    console.log("MEMBERS", members);
     members.map((member) => {
       if(!member.user_id.roles.includes(TEAM_HEAD)){
         let teamMember = member.user_id;
