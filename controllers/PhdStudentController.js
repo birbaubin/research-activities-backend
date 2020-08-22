@@ -48,7 +48,6 @@ exports.findPhdStudent = async (req, resp) => {
 
 exports.findAllPhdStudents = async (req, resp) => {
   try {
-    console.log("USER", req.user);
     const phdStudents = await PhdStudent.find();
     const result = await Promise.all(
       phdStudents.map(async (student) => {
@@ -80,23 +79,21 @@ exports.deletePhdStudent = async (req, resp) => {
 
 exports.findStudentsOfUser = async (req, resp) => {
   try {
+    console.log("USER",req.user.user)
+
     const { _id } = req.user.user;
-    console.log("ID",_id)
+
     let laboratories = await Laboratory.find({head_id:_id})
     laboratories = laboratories.map(lab => lab._id)
-    console.log('LABS',laboratories);
     let teams = await Team.find({laboratory_id:{$in: laboratories }})
     teams = teams.map(team => team._id);
-    console.log('TEAMS',teams);
     let members = await TeamMemberShip.find({team_id:{$in: teams}})
     members = members.map(member => member.user_id);
     let queryUsers = [mongoose.Types.ObjectId(_id), ...members];
-    console.log("MEMBERS",queryUsers);
 
     let students = await PhdStudent.find({ $or: [{ supervisor:{$in: queryUsers } }, { coSupervisor: {$in: queryUsers} }] })
       .populate("supervisor")
       .populate("coSupervisor");
-    console.log("STUUUDENTS",students);
     return resp.status(200).send({students});
   } catch (error) {
     console.log("ERROR", error);

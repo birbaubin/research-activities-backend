@@ -5,7 +5,7 @@ const config = require("../config");
 
 mongoose.set("useCreateIndex", true);
 mongoose
-    .connect(config.MONGODB_URI, {
+    .connect("mongodb://localhost/research-activities-db", {
         useUnifiedTopology: true,
         useNewUrlParser: true,
     })

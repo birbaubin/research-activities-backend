@@ -11,7 +11,7 @@ const NotificationSchema = new Schema({
   fullName:String,
   user_id: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
   },
 });
 
