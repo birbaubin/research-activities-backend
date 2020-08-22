@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 const TeamMembershipSchema = new Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
     required: [true],
   },
   team_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Team",
+    ref: "team",
     require: [true],
   },
   active: {
