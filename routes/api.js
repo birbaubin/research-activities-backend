@@ -99,7 +99,6 @@ router.get("/free-laboratories", LaboratoryController.getFreeLaboratories);
 
 router.get("/entitle-laboratory/:head_id/:lab_id", LaboratoryController.associateHeadToLaboratory);
 
-router.get("/NodesForOrgChart",LaboratoryController.getNodesForOrgChart);
 
 /***************** Teams endpoints **************/
 router.post("/teams", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), TeamController.createTeam);
