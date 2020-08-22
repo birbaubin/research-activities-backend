@@ -47,8 +47,6 @@ router.post("/update-followed-user", UserController.updateFollowedUser);
 
 router.get("/filtering-options/:laboratoryHeadId", UserController.getFilteringOptions);
 
-router.get("/director-filtering-options/:user_id", UserController.getDirectorFilteringOptions);
-
 /************* Universities endpoints ***********/
 
 router.post("/universities", authorize([role.CED_HEAD]), UniversityController.createUniversity);

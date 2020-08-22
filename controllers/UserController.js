@@ -346,17 +346,3 @@ exports.getFilteringOptions = async (req, resp) => {
 //     console.log(err);
 //   }
 // };
-
-exports.getDirectorFilteringOptions = async(req, resp) => {
-
-  let establishment = await Establishment.findOne({research_director_id: req.params.user_id});
-  let laboratories = await Laboratory.find({establishment_id: establishment._id});
-  let teams = [];
-  for (let laboratory of laboratories) {
-    let innerTeams = await Team.find({laboratory_id: laboratory._id});
-    innerTeams = innerTeams.map((team) => { return {...team._doc, optionType: "team"}})
-    teams = [...teams, ...innerTeams];
-  };
-
-  resp.send(teams);
-}
