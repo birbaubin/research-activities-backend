@@ -267,7 +267,7 @@ exports.updateProfilePicture = async (req, resp) => {
 };
 
 exports.getFilteringOptions = async (req, resp) => {
-  const user_id = req.params.user_id;
+  const user_id = req.params.laboratoryHeadId;
   let teams = [];
   const laboratory = await Laboratory.findOne({
     head_id: user_id,
