@@ -187,11 +187,13 @@ exports.getNodesForOrgChart = async (req, resp) => {
       let head = team.head_id;
       let headName = head ? [head.firstName[0], head.lastName].join('.') : null;
       if(head) nodes.push({ id: team._id, name: team.name, pid: 0, tags: ["members-group", "group"] }, { id: head._id, stpid: team._id, pid: 0, name: headName, title: "chef d'équipe", img: head.profilePicture || "https://cdn.balkan.app/shared/empty-img-white.svg" }) 
+      else { nodes.push({ id: team._id, name: team.name, pid: 0, tags: ["members-group", "group"] })}
     })
+
     let heads = teams.map((team) => team.head_id);
     teams = teams.map((team) => team._id);
     console.log("HEADS", heads);
-    let members = await TeamMembership.find({ team_id: { $in: teams } }).populate("user_id").populate("team_id");
+    let members = await TeamMembership.find({ team_id: { $in: teams }, active:true }).populate("user_id").populate("team_id");
     console.log("MEMBERS", members);
     members.map((member) => {
       if(!member.user_id.roles.includes(TEAM_HEAD)){
@@ -199,7 +201,7 @@ exports.getNodesForOrgChart = async (req, resp) => {
         let team = member.team_id;
         let memberName = [teamMember.firstName[0], teamMember.lastName].join('.')
         if(!member.team_id.head_id){
-          if(member._id === localeCompare(members[0]._id)) nodes.push({ id: team._id, name: team.name, pid: 0, tags: ["members-group", "group"] }, { id: teamMember._id, stpid: team._id, pid: 0, name: memberName, img: teamMember.profilePicture || "https://cdn.balkan.app/shared/empty-img-white.svg" });
+          if(member._id === members[0]._id) nodes.push({ id: team._id, name: team.name, pid: 0, tags: ["members-group", "group"] }, { id: teamMember._id, stpid: team._id, pid: 0, name: memberName, img: teamMember.profilePicture || "https://cdn.balkan.app/shared/empty-img-white.svg" });
           else{
             nodes.push({ id: teamMember._id, stpid: team._id, pid: members[0]._id, name: memberName, img: teamMember.profilePicture || "https://cdn.balkan.app/shared/empty-img-white.svg" });
           }
@@ -209,7 +211,7 @@ exports.getNodesForOrgChart = async (req, resp) => {
         }
       }
     })
-    return resp.status(200).send(teams);
+    return resp.status(200).send(nodes);
   } catch (error) {
     console.log(error);
     return resp.status(500).send(error);
