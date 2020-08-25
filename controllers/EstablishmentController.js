@@ -4,7 +4,7 @@ const University = require("../models/university");
 const User = require("../models/user");
 const { findOne } = require("../models/university");
 
-exports.createEstablishment = async ( req, resp ) => {
+exports.createEstablishment = async (req, resp) => {
   try {
     let establishment = await Establishment.create(req.body);
     resp.status(200).send(establishment);
@@ -51,7 +51,7 @@ exports.findAllEstablishments = async (req, resp) => {
         laboratories: await Establishment.find({
           establishment_id: establishment._id,
         }),
-        research_director: await User.findOne({_id: establishment.research_director_id})
+        research_director: await User.findOne({ _id: establishment.research_director_id })
       }))
     );
     resp.status(200).send(establishments_1);
@@ -83,10 +83,10 @@ exports.getEstablishmentLaboratories = async (req, resp) => {
 
 
 exports.getResearchDirector = async (req, resp) => {
-  try{
-    const establishment = await Establishment.findOne({_id: req.params.establishment_id});
+  try {
+    const establishment = await Establishment.findOne({ _id: req.params.establishment_id });
   }
-  catch(error){
+  catch (error) {
     console.log(error);
     resp.status(500).send(error);
   }
@@ -94,29 +94,34 @@ exports.getResearchDirector = async (req, resp) => {
 
 exports.changeResearchDirector = async (req, resp) => {
 
-  let oldDirector = await User.findOneAndUpdate({isDirector: true}, {isDirector: false});
-  let newDirector = await User.findOneAndUpdate({_id: req.params.user_id}, { isDirector: true});
-  let establishment = await Establishment.findOne({_id: req.params.establishment_id});
-    const date = new Date();
-    const today = `${date.getFullYear()}/${
-      date.getMonth() + 1
+
+  let establishment = await Establishment.findOne({ _id: req.params.establishment_id });
+  if (!establishment)
+    resp.status(404).send({ message: "Establishment not found" });
+
+  await User.findOneAndUpdate({ _id: establishment.research_director_id }, { $pull: { roles: "RESEARCH_DIRECTOR" } });
+  let newDirector = await User.findOneAndUpdate({ _id: req.params.user_id }, { $push: { roles: "RESEARCH_DIRECTOR" } });
+
+  const date = new Date();
+  const today = `${date.getFullYear()}/${
+    date.getMonth() + 1
     }/${date.getDate()}`;
 
-    establishment.direction_history.forEach((element) => {
-      if (!element.end) {
-        element.end = today;
-      }
-    });
+  establishment.direction_history.forEach((element) => {
+    if (!element.end) {
+      element.end = today;
+    }
+  });
 
-    let direction_history_item = {
-      director: newDirector,
-      start: today,
-      end: null,
-    };
+  let direction_history_item = {
+    director: newDirector,
+    start: today,
+    end: null,
+  };
 
-    establishment.direction_history.push(direction_history_item);
-    establishment.research_director_id = newDirector._id;
-    const result = await establishment.save();
+  establishment.direction_history.push(direction_history_item);
+  establishment.research_director_id = newDirector._id;
+  const result = await establishment.save();
 
   resp.send(result);
 
@@ -125,8 +130,8 @@ exports.changeResearchDirector = async (req, resp) => {
 
 exports.getEstablishmentOfDirector = async (req, resp) => {
 
-  let establishment = await Establishment.find({research_director_id: req.params.user_id});
-  if(!establishment) resp.status(404).send({message: "Establishment not foud"});
+  let establishment = await Establishment.find({ research_director_id: req.params.user_id });
+  if (!establishment) resp.status(404).send({ message: "Establishment not foud" });
   resp.send(establishment);
 
 }
