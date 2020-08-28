@@ -21,7 +21,7 @@ const EstablishmentSchema = new Schema({
   },
   research_director_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
     required: [false],
   },
   direction_history : [{

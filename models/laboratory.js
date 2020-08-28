@@ -17,7 +17,7 @@ const LaboratorySchema = new Schema({
   },
   head_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
     required: false,
   },
   head_history: [

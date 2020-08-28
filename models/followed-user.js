@@ -17,7 +17,7 @@ const FollowedUserSchema = new Schema({
   profilePicture: String,
   user_id: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
   },
   platform: String,
 });
