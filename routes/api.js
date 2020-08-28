@@ -125,7 +125,7 @@ router.get(
 
 router.get(
   "/establishments",
-  authorize([role.CED_HEAD]),
+  authorize([role.CED_HEAD, role.RESEARCH_DIRECTOR]),
   EstablishmentController.findAllEstablishments
 );
 
@@ -158,7 +158,7 @@ router.get("/laboratories/:_id", LaboratoryController.findLaboratory);
 
 router.get(
   "/laboratories",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.RESEARCH_DIRECTOR]),
   LaboratoryController.findAllLaboratories
 );
 
