@@ -66,6 +66,11 @@ router.get(
   UserController.getFilteringOptions
 );
 
+router.get(
+  "/director-filtering-options/:user_id",
+  UserController.getDirectorFilteringOptions
+);
+
 /************* Universities endpoints ***********/
 
 router.post(
