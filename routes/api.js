@@ -67,7 +67,8 @@ router.get(
 );
 
 router.get(
-  "/director-filtering-options/:user_id", authorize([role.RESEARCH_DIRECTOR]),
+  "/director-filtering-options/:user_id",
+  authorize([role.RESEARCH_DIRECTOR]),
   UserController.getDirectorFilteringOptions
 );
 
@@ -273,68 +274,30 @@ router.post(
 /***************** Phd students  endpoints **************/
 router.post(
   "/phdStudents",
-  authorize([
-    role.CED_HEAD,
-    role.LABORATORY_HEAD,
-    role.TEAM_HEAD,
-    role.RESEARCHER,
-  ]),
-
   PhdStudentController.createPhdStudent
 );
 
 router.put(
   "/phdStudents",
-  authorize([
-    role.CED_HEAD,
-    role.LABORATORY_HEAD,
-    role.TEAM_HEAD,
-    role.RESEARCHER,
-  ]),
-
   PhdStudentController.updatePhdStudent
 );
 router.get(
   "/phdStudents/:_id",
-  authorize([
-    role.CED_HEAD,
-    role.LABORATORY_HEAD,
-    role.TEAM_HEAD,
-    role.RESEARCHER,
-  ]),
   PhdStudentController.findPhdStudent
 );
 
 router.get(
   "/phdStudentsOfUser/",
-  authorize([
-    role.CED_HEAD,
-    role.LABORATORY_HEAD,
-    role.TEAM_HEAD,
-    role.RESEARCHER,
-  ]),
   PhdStudentController.findStudentsOfUser
 );
 
 router.get(
   "/phdStudents",
-  authorize([
-    role.CED_HEAD,
-    role.LABORATORY_HEAD,
-    role.TEAM_HEAD,
-    role.RESEARCHER,
-  ]),
   PhdStudentController.findAllPhdStudents
 );
 
 router.delete(
   "/phdStudents/:_id",
-  authorize([
-    role.CED_HEAD,
-    role.LABORATORY_HEAD,
-    role.TEAM_HEAD,
-    role.RESEARCHER,
-  ]),
   PhdStudentController.deletePhdStudent
 );
 
