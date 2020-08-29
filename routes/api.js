@@ -67,7 +67,7 @@ router.get(
 );
 
 router.get(
-  "/director-filtering-options/:user_id",
+  "/director-filtering-options/:user_id", authorize([role.RESEARCH_DIRECTOR]),
   UserController.getDirectorFilteringOptions
 );
 
