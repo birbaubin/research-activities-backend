@@ -5,7 +5,8 @@ const User = require("../models/user");
 const Team = require("../models/team");
 const Laboratory = require("../models/laboratory");
 const TeamMemberShip = require("../models/team-membership");
-const { CED_HEAD } = require("../helpers/role");
+const { CED_HEAD, RESEARCH_DIRECTOR } = require("../helpers/role");
+const Establishment = require("../models/establishment");
 const PhdStudent = mongoose.model("phdStudent");
 
 exports.createPhdStudent = async (req, resp) => {
@@ -79,36 +80,49 @@ exports.deletePhdStudent = async (req, resp) => {
   }
 };
 
+async function getPhdStudentsOfLaboratory(laboratories){
+  let teams;
+  let members;
+  let queryUsers;
+  let heads = laboratories.map((lab) => lab.head_id)
+  laboratories = laboratories.map((lab) => lab._id);
+  teams = await Team.find({ laboratory_id: { $in: laboratories } });
+  teams = teams.map((team) => team._id);
+  members = await TeamMemberShip.find({ team_id: { $in: teams } });
+  members = members.map((member) => member.user_id);
+  queryUsers = [...heads, ...members];
+  let students = await PhdStudent.find({
+    $or: [
+      { supervisor: { $in: queryUsers } },
+      { coSupervisor: { $in: queryUsers } },
+    ],
+  })
+    .populate("supervisor")
+    .populate("coSupervisor");
+
+  return students
+
+}
+
 exports.findStudentsOfUser = async (req, resp) => {
   try {
-    const { _id, roles } = req.user.user;
+    const { _id, roles } = req.user;
     let laboratories;
     let students;
-    let teams;
-    let members;
-    let queryUsers;
-    if (roles.includes(CED_HEAD)) {
+    if (roles && roles.includes(CED_HEAD)) {
       students = await PhdStudent.find()
         .populate("supervisor")
         .populate("coSupervisor");
       
-    } else {
+    } else if(roles && roles.includes(RESEARCH_DIRECTOR)){
+      const establishment = await Establishment.findOne({ research_director_id: _id });
+      laboratories = await Laboratory.find({ establishment_id: establishment._id });
+      students = await getPhdStudentsOfLaboratory(laboratories);
+    }
+    
+    else {
       laboratories = await Laboratory.find({ head_id: _id });
-      laboratories = laboratories.map((lab) => lab._id);
-      teams = await Team.find({ laboratory_id: { $in: laboratories } });
-      teams = teams.map((team) => team._id);
-      members = await TeamMemberShip.find({ team_id: { $in: teams } });
-      members = members.map((member) => member.user_id);
-      queryUsers = [mongoose.Types.ObjectId(_id), ...members];
-
-      students = await PhdStudent.find({
-        $or: [
-          { supervisor: { $in: queryUsers } },
-          { coSupervisor: { $in: queryUsers } },
-        ],
-      })
-        .populate("supervisor")
-        .populate("coSupervisor");
+      students = await getPhdStudentsOfLaboratory(laboratories);
     }
 
     return resp.status(200).send({ students });
