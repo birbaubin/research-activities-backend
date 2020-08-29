@@ -66,7 +66,10 @@ router.get(
   UserController.getFilteringOptions
 );
 
-router.get("/director-filtering-options/:user_id", UserController.getDirectorFilteringOptions);
+router.get(
+  "/director-filtering-options/:user_id", authorize([role.RESEARCH_DIRECTOR]),
+  UserController.getDirectorFilteringOptions
+);
 
 /************* Universities endpoints ***********/
 
@@ -127,7 +130,7 @@ router.get(
 
 router.get(
   "/establishments",
-  authorize([role.CED_HEAD]),
+  authorize([role.CED_HEAD, role.RESEARCH_DIRECTOR]),
   EstablishmentController.findAllEstablishments
 );
 
@@ -160,7 +163,7 @@ router.get("/laboratories/:_id", LaboratoryController.findLaboratory);
 
 router.get(
   "/laboratories",
-  authorize([role.CED_HEAD, role.LABORATORY_HEAD]),
+  authorize([role.CED_HEAD, role.LABORATORY_HEAD, role.RESEARCH_DIRECTOR]),
   LaboratoryController.findAllLaboratories
 );
 

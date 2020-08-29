@@ -336,6 +336,40 @@ exports.getFilteringOptions = async (req, resp) => {
 
   resp.status(200).send([...teamsOptions]);
 };
+
+
+exports.getDirectorFilteringOptions = async (req, resp) => {
+  const user_id = req.params.user_id;
+  let establishment = await Establishment.findOne({research_director_id: user_id});
+  let laboratories = await Laboratory.find({establishment_id: establishment._id});
+
+  let teams = [];
+  for(let lab of laboratories){
+    let innerTeams = await Team.find({laboratory_id: lab._id});
+    teams = [...teams, ...innerTeams];
+  }
+
+  const followedUsers = await FollowedUser.find();
+  const followedUsersIds = followedUsers.map(({ user_id }) => user_id);
+
+  const teamsOptionsPromises = teams.map(async (team) => {
+    const teamsMemberShips = await TeamMemberShip.find({
+      team_id: team._id,
+      user_id: { $in: followedUsersIds },
+      active: true,
+    });
+
+    return {
+      ...team._doc,
+      membershipCount: teamsMemberShips.length,
+      optionType: "team",
+    };
+  });
+
+  const teamsOptions = await Promise.all(teamsOptionsPromises);
+
+  resp.status(200).send([...teamsOptions]);
+};
 // exports.getPhdStudents = async (req, resp) => {
 //   let user = userHelper.requesterUser(req);
 //   try {
@@ -346,17 +380,3 @@ exports.getFilteringOptions = async (req, resp) => {
 //     console.log(err);
 //   }
 // };
-
-exports.getDirectorFilteringOptions = async(req, resp) => {
-
-  let establishment = await Establishment.findOne({research_director_id: req.params.user_id});
-  let laboratories = await Laboratory.find({establishment_id: establishment._id});
-  let teams = [];
-  for (let laboratory of laboratories) {
-    let innerTeams = await Team.find({laboratory_id: laboratory._id});
-    innerTeams = innerTeams.map((team) => { return {...team._doc, optionType: "team"}})
-    teams = [...teams, ...innerTeams];
-  };
-
-  resp.send(teams);
-}
