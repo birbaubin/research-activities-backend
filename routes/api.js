@@ -147,6 +147,10 @@ router.get(
   EstablishmentController.getEstablishmentLaboratories
 );
 
+router.get(
+  "/establishment-of-director/:user_id",
+  authorize([role.RESEARCH_DIRECTOR]),
+  EstablishmentController.getEstablishmentOfDirector)
 /************* Laboratories endpoints ***********/
 router.post(
   "/laboratories",
