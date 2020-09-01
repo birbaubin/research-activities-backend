@@ -119,7 +119,7 @@ router.get("/remove-from-team/:team_id/:user_id", authorize([role.CED_HEAD, role
 router.get("/team-head-association/:team_id/:head_id", authorize([role.CED_HEAD, role.LABORATORY_HEAD]), TeamController.associateHeadToTeam);
 
 router.get("/statistics", statisticsHelper.getStatistics);
-
+router.get("/team-publications", statisticsHelper.getPublicationsPerTeamPerYear);
 router.get("/all-statistics", statisticsHelper.getAllStatistics);
 
 /***************** Notifications endpoints **************/

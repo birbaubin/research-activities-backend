@@ -112,6 +112,47 @@ exports.getStatistics = async (req, resp) => {
   resp.status(200).send(followedUsersStatistics);
 };
 
+exports.getPublicationsPerTeamPerYear = async (req, resp) => {
+  const teamAbbreviation = req.param("team_abbreviation");
+  const year = req.param("year");
+  console.log(teamAbbreviation);
+  console.log(year);
+  
+  const followedUsers = await getFollowedUsers({
+    teamAbbreviation,
+  });
+ 
+  const followedUsersStatistics = followedUsers.map(
+    ({ firstName, lastName, publications, profilePicture, ...user }) => {
+      const yearlyPublications = publications
+        .map((publication) => publication.year)
+        .reduce((r, c) => ((r[c] = (r[c] || 0) + 1), r), {});
+     
+        
+      return {
+      
+        name: firstName + " " + lastName,
+        profilePicture,
+        yearlyPublications,
+        publications,
+        
+       
+      };
+    }
+  );
+
+  const publications =[];
+  console.log(year);
+  followedUsersStatistics.map((researcher)=>{
+      researcher.publications.map(publication =>{
+        if(publication.year===year)
+          publications.push(publication)        
+      })
+    })
+    console.log(publications);
+  resp.status(200).send(publications);
+}
+
 exports.getAllStatistics = async function (req, resp) {
   try {
     let stats = await Promise.all([
