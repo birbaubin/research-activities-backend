@@ -242,7 +242,7 @@ router.get(
 );
 
 router.get("/statistics", statisticsHelper.getStatistics);
-
+router.get("/team-publications", statisticsHelper.getPublicationsPerTeamPerYear);
 router.get("/all-statistics", statisticsHelper.getAllStatistics);
 
 /***************** Notifications endpoints **************/
