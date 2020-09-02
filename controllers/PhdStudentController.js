@@ -90,7 +90,7 @@ async function getPhdStudentsOfLaboratory(laboratories){
   teams = teams.map((team) => team._id);
   members = await TeamMemberShip.find({ team_id: { $in: teams } });
   members = members.map((member) => member.user_id);
-  queryUsers = [...heads, ...members];
+  queryUsers = [mongoose.Types.ObjectId(_id),...heads, ...members];
   let students = await PhdStudent.find({
     $or: [
       { supervisor: { $in: queryUsers } },
