@@ -80,7 +80,7 @@ exports.deletePhdStudent = async (req, resp) => {
   }
 };
 
-async function getPhdStudentsOfLaboratory(laboratories){
+async function getPhdStudentsOfLaboratory(laboratories, _id){
   let teams;
   let members;
   let queryUsers;
@@ -117,12 +117,12 @@ exports.findStudentsOfUser = async (req, resp) => {
     } else if(roles && roles.includes(RESEARCH_DIRECTOR)){
       const establishment = await Establishment.findOne({ research_director_id: _id });
       laboratories = await Laboratory.find({ establishment_id: establishment._id });
-      students = await getPhdStudentsOfLaboratory(laboratories);
+      students = await getPhdStudentsOfLaboratory(laboratories, _id);
     }
     
     else {
       laboratories = await Laboratory.find({ head_id: _id });
-      students = await getPhdStudentsOfLaboratory(laboratories);
+      students = await getPhdStudentsOfLaboratory(laboratories, _id);
     }
 
     return resp.status(200).send({ students });
