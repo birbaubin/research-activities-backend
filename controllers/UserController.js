@@ -7,14 +7,14 @@ const TeamMemberShip = require("../models/team-membership");
 const Laboratory = require("../models/laboratory");
 const Team = require("../models/team");
 const mailSender = require("../helpers/mail-sender");
-const roles = require("../helpers/role");
+const differentRoles = require("../helpers/role");
 const userHelper = require("../helpers/user-helper");
 const PhdStudent = require("../models/phdStudent");
 const Establishment = require("../models/establishment");
 
 exports.createUser = async (req, resp) => {
   const { email, password, roles, creatorId } = req.body;
-  const rolesArray = [roles.CED_HEAD, roles.LABORATORY_HEAD, roles.RESEARCHER];
+  const rolesArray = [differentRoles.CED_HEAD, differentRoles.LABORATORY_HEAD, differentRoles.RESEARCHER];
   if (!rolesArray.includes(req.body.roles)) {
     resp.status(400).send({ error: "Incorrect roles value" });
   } else {
@@ -224,7 +224,7 @@ exports.updatePassword = async (req, resp) => {
 
 exports.getLaboratoryHeads = async (req, resp) => {
   try {
-    const laboratoryHeads = await User.find({ roles: roles.LABORATORY_HEAD });
+    const laboratoryHeads = await User.find({ roles: differentRoles.LABORATORY_HEAD });
     resp.status(200).send(laboratoryHeads);
   } catch (error) {
     resp.status(500).send(error);
@@ -233,7 +233,8 @@ exports.getLaboratoryHeads = async (req, resp) => {
 
 exports.getResearchers = async (req, resp) => {
   try {
-    const researchers = await User.find({ roles: roles.RESEARCHER });
+    const users = await User.find();
+    const researchers = users.filter(user => user.roles.includes(differentRoles.RESEARCHER));
     resp.status(200).send(researchers);
   } catch (error) {
     resp.status(500).send(error);
