@@ -7,6 +7,10 @@ const NotificationSchema = new Schema({
   message: String,
   publication: Object,
   authorId: String,
+  author_user_id: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
+  },
   profilePicture: String,
   fullName:String,
   user_id: {
