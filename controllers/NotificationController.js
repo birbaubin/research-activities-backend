@@ -25,9 +25,8 @@ exports.notifyFolloweers = async (req, resp) => {
     const publication = req.body.publication;
     const followedUserId = req.body.followed_user_id;
     const authorId = req.body.author_id;
-    const scrapedPublications = req.body.scraped_publications;
-
-    if (!publication || !followedUserId || !authorId || !scrapedPublications)
+    const author_user_id = req.body.author_user_id;
+    if (!publication || !followedUserId || !authorId)
       throw Error("No publication or No followedUserId or authorId");
 
     const isUpdated = await FollowedUser.updateOne(
