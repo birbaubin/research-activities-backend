@@ -29,9 +29,12 @@ exports.notifyFolloweers = async (req, resp) => {
     if (!publication || !followedUserId || !authorId)
       throw Error("No publication or No followedUserId or authorId");
 
+    const { publications } = await FollowedUser.findOne({
+      user_id: followedUserId,
+    });
     const isUpdated = await FollowedUser.updateOne(
       { user_id: followedUserId },
-      { $set: { publications: scrapedPublications } }
+      { $set: { publications: [...publications, publication] } }
     );
 
     if (!isUpdated.ok) throw Error("reseracher publications were not updated");
