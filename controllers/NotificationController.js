@@ -69,7 +69,8 @@ exports.notifyFolloweers = async (req, resp) => {
           await Notification.create({
             user_id,
             authorId,
-            publication,
+            author_user_id,
+            publication: publication.title,
             profilePicture: followedUser.profilePicture,
             fullName,
           })
