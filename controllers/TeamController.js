@@ -89,8 +89,21 @@ exports.findAllTeams = async (req, resp) => {
 
 exports.deleteTeam = async (req, resp) => {
   try {
-    const result = await Team.deleteOne({ _id: req.params._id });
-    resp.status(200).send(result);
+    const team = await Team.findOne({ _id: req.params._id });
+    const teamHead = await User.findOne({ _id: team.head_id });
+
+    const resultUserUpdate = await User.updateOne(
+      { _id: teamHead._id },
+      { $set: { roles: teamHead.roles.filter((r) => r != "TEAM_HEAD") } }
+    );
+    const resultTeamMemberShipUpdate = await TeamMemberShip.updateMany(
+      { team_id: req.params._id },
+      { $set: { active: false } }
+    );
+
+    const resultTeamDelete = await Team.deleteOne({ _id: req.params._id });
+
+    resp.status(200).send(resultTeamDelete);
   } catch (error) {
     console.log(error);
     resp.status(500).send(error);
